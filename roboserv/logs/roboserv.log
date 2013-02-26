@@ -1,0 +1,300 @@
+Starting roboserv.
+Starting roboserv.
+Starting roboserv.
+Starting roboserv.
+Starting roboserv in "" directory.
+Starting roboserv.
+Starting roboserv in "" directory.
+roboserv PID file roboserv.pid already exists.
+Starting roboserv.
+Starting roboserv in "" directory.
+15 signal has been recevied.
+Starting roboserv.
+Starting roboserv in "" directory.
+15 signal has been recevied.
+Stopping roboserv application server.
+Roboserv is stopped.
+Starting roboserv.
+Starting roboserv in "" directory.
+301 GET / (::1) 0.79ms
+200 GET /index.html (::1) 47.76ms
+200 GET /main.css (::1) 0.57ms
+200 GET /robochat.js (::1) 0.60ms
+404 GET /favicon.ico (::1) 0.43ms
+Signalling channle was opened.
+SDP message has been received. SDP content: v=0
+o=- 3355620701 2 IN IP4 127.0.0.1
+s=-
+t=0 0
+a=group:BUNDLE audio video
+a=msid-semantic: WMS tLiGfwXLUIdu2tkpZ6dUM9uMtM7LC8TOR27R
+m=audio 1 RTP/SAVPF 103 104 111 0 8 107 106 105 13 126
+c=IN IP4 0.0.0.0
+a=rtcp:1 IN IP4 0.0.0.0
+a=ice-ufrag:3JCCjqDYBA6Q3M27
+a=ice-pwd:kkW3l+4gpnEe9IIgutsbHTfN
+a=ice-options:google-ice
+a=sendrecv
+a=mid:audio
+a=rtcp-mux
+a=crypto:1 AES_CM_128_HMAC_SHA1_80 inline:cVgjdqBuv1Wnd/ajthm/hAdMLQ+ebVFvecW4Fo0h
+a=rtpmap:103 ISAC/16000
+a=rtpmap:104 ISAC/32000
+a=rtpmap:111 opus/48000/2
+a=rtpmap:0 PCMU/8000
+a=rtpmap:8 PCMA/8000
+a=rtpmap:107 CN/48000
+a=rtpmap:106 CN/32000
+a=rtpmap:105 CN/16000
+a=rtpmap:13 CN/8000
+a=rtpmap:126 telephone-event/8000
+a=ssrc:967422579 cname:PaZP5HpSr/d2GhPu
+a=ssrc:967422579 msid:tLiGfwXLUIdu2tkpZ6dUM9uMtM7LC8TOR27R a0
+a=ssrc:967422579 mslabel:tLiGfwXLUIdu2tkpZ6dUM9uMtM7LC8TOR27R
+a=ssrc:967422579 label:tLiGfwXLUIdu2tkpZ6dUM9uMtM7LC8TOR27Ra0
+m=video 1 RTP/SAVPF 100 116 117
+c=IN IP4 0.0.0.0
+a=rtcp:1 IN IP4 0.0.0.0
+a=ice-ufrag:3JCCjqDYBA6Q3M27
+a=ice-pwd:kkW3l+4gpnEe9IIgutsbHTfN
+a=ice-options:google-ice
+a=sendrecv
+a=mid:video
+a=rtcp-mux
+a=crypto:1 AES_CM_128_HMAC_SHA1_80 inline:cVgjdqBuv1Wnd/ajthm/hAdMLQ+ebVFvecW4Fo0h
+a=rtpmap:100 VP8/90000
+a=rtpmap:116 red/90000
+a=rtpmap:117 ulpfec/90000
+a=ssrc:406490239 cname:PaZP5HpSr/d2GhPu
+a=ssrc:406490239 msid:tLiGfwXLUIdu2tkpZ6dUM9uMtM7LC8TOR27R v0
+a=ssrc:406490239 mslabel:tLiGfwXLUIdu2tkpZ6dUM9uMtM7LC8TOR27R
+a=ssrc:406490239 label:tLiGfwXLUIdu2tkpZ6dUM9uMtM7LC8TOR27Rv0
+.
+200 GET /index.html (::1) 0.46ms
+304 GET /main.css (::1) 0.47ms
+304 GET /robochat.js (::1) 0.72ms
+Signalling channel has been closed.
+404 GET /favicon.ico (::1) 0.32ms
+Signalling channle was opened.
+SDP message has been received. SDP content: v=0
+o=- 2556808668 2 IN IP4 127.0.0.1
+s=-
+t=0 0
+a=group:BUNDLE audio video
+a=msid-semantic: WMS 6I4nGp0HLZmmbMPUs8PPDJ3I5XK1ewgoULOL
+m=audio 1 RTP/SAVPF 103 104 111 0 8 107 106 105 13 126
+c=IN IP4 0.0.0.0
+a=rtcp:1 IN IP4 0.0.0.0
+a=ice-ufrag:V/oxz5twIOohwWOc
+a=ice-pwd:WoiGpp1ug6DiKu1kGyoF4qxF
+a=ice-options:google-ice
+a=sendrecv
+a=mid:audio
+a=rtcp-mux
+a=crypto:1 AES_CM_128_HMAC_SHA1_80 inline:cTAXv54fgsqFeidC68A3funywXbi3ZtSl4XbtmQQ
+a=rtpmap:103 ISAC/16000
+a=rtpmap:104 ISAC/32000
+a=rtpmap:111 opus/48000/2
+a=rtpmap:0 PCMU/8000
+a=rtpmap:8 PCMA/8000
+a=rtpmap:107 CN/48000
+a=rtpmap:106 CN/32000
+a=rtpmap:105 CN/16000
+a=rtpmap:13 CN/8000
+a=rtpmap:126 telephone-event/8000
+a=ssrc:3995574881 cname:ziOZoowrhCUQo4Ox
+a=ssrc:3995574881 msid:6I4nGp0HLZmmbMPUs8PPDJ3I5XK1ewgoULOL a0
+a=ssrc:3995574881 mslabel:6I4nGp0HLZmmbMPUs8PPDJ3I5XK1ewgoULOL
+a=ssrc:3995574881 label:6I4nGp0HLZmmbMPUs8PPDJ3I5XK1ewgoULOLa0
+m=video 1 RTP/SAVPF 100 116 117
+c=IN IP4 0.0.0.0
+a=rtcp:1 IN IP4 0.0.0.0
+a=ice-ufrag:V/oxz5twIOohwWOc
+a=ice-pwd:WoiGpp1ug6DiKu1kGyoF4qxF
+a=ice-options:google-ice
+a=sendrecv
+a=mid:video
+a=rtcp-mux
+a=crypto:1 AES_CM_128_HMAC_SHA1_80 inline:cTAXv54fgsqFeidC68A3funywXbi3ZtSl4XbtmQQ
+a=rtpmap:100 VP8/90000
+a=rtpmap:116 red/90000
+a=rtpmap:117 ulpfec/90000
+a=ssrc:2664234159 cname:ziOZoowrhCUQo4Ox
+a=ssrc:2664234159 msid:6I4nGp0HLZmmbMPUs8PPDJ3I5XK1ewgoULOL v0
+a=ssrc:2664234159 mslabel:6I4nGp0HLZmmbMPUs8PPDJ3I5XK1ewgoULOL
+a=ssrc:2664234159 label:6I4nGp0HLZmmbMPUs8PPDJ3I5XK1ewgoULOLv0
+.
+200 GET /index.html (::1) 0.55ms
+200 GET /libcanvas.js (::1) 6.02ms
+Signalling channel has been closed.
+304 GET /main.css (::1) 0.57ms
+304 GET /robochat.js (::1) 0.48ms
+404 GET /favicon.ico (::1) 0.40ms
+Signalling channle was opened.
+SDP message has been received. SDP content: v=0
+o=- 2696934833 2 IN IP4 127.0.0.1
+s=-
+t=0 0
+a=group:BUNDLE audio video
+a=msid-semantic: WMS 1nCI4XCGt5GhpUF4vfK1PffOCmpoUWnPvFgH
+m=audio 1 RTP/SAVPF 103 104 111 0 8 107 106 105 13 126
+c=IN IP4 0.0.0.0
+a=rtcp:1 IN IP4 0.0.0.0
+a=ice-ufrag:4GCTHEleXs1LKIya
+a=ice-pwd:nF149XrU+RsEkngYPu8P2wxH
+a=ice-options:google-ice
+a=sendrecv
+a=mid:audio
+a=rtcp-mux
+a=crypto:1 AES_CM_128_HMAC_SHA1_80 inline:sGi4d/CfV1/Til8zN6K9cS+cBVFw5L/K/W/3DAbu
+a=rtpmap:103 ISAC/16000
+a=rtpmap:104 ISAC/32000
+a=rtpmap:111 opus/48000/2
+a=rtpmap:0 PCMU/8000
+a=rtpmap:8 PCMA/8000
+a=rtpmap:107 CN/48000
+a=rtpmap:106 CN/32000
+a=rtpmap:105 CN/16000
+a=rtpmap:13 CN/8000
+a=rtpmap:126 telephone-event/8000
+a=ssrc:3529663858 cname:2AvTA0xjdWHl43rc
+a=ssrc:3529663858 msid:1nCI4XCGt5GhpUF4vfK1PffOCmpoUWnPvFgH a0
+a=ssrc:3529663858 mslabel:1nCI4XCGt5GhpUF4vfK1PffOCmpoUWnPvFgH
+a=ssrc:3529663858 label:1nCI4XCGt5GhpUF4vfK1PffOCmpoUWnPvFgHa0
+m=video 1 RTP/SAVPF 100 116 117
+c=IN IP4 0.0.0.0
+a=rtcp:1 IN IP4 0.0.0.0
+a=ice-ufrag:4GCTHEleXs1LKIya
+a=ice-pwd:nF149XrU+RsEkngYPu8P2wxH
+a=ice-options:google-ice
+a=sendrecv
+a=mid:video
+a=rtcp-mux
+a=crypto:1 AES_CM_128_HMAC_SHA1_80 inline:sGi4d/CfV1/Til8zN6K9cS+cBVFw5L/K/W/3DAbu
+a=rtpmap:100 VP8/90000
+a=rtpmap:116 red/90000
+a=rtpmap:117 ulpfec/90000
+a=ssrc:1575039956 cname:2AvTA0xjdWHl43rc
+a=ssrc:1575039956 msid:1nCI4XCGt5GhpUF4vfK1PffOCmpoUWnPvFgH v0
+a=ssrc:1575039956 mslabel:1nCI4XCGt5GhpUF4vfK1PffOCmpoUWnPvFgH
+a=ssrc:1575039956 label:1nCI4XCGt5GhpUF4vfK1PffOCmpoUWnPvFgHv0
+.
+200 GET /index.html (::1) 0.67ms
+304 GET /main.css (::1) 0.57ms
+304 GET /robochat.js (::1) 0.61ms
+304 GET /libcanvas.js (::1) 0.77ms
+Signalling channel has been closed.
+404 GET /favicon.ico (::1) 0.34ms
+Signalling channle was opened.
+SDP message has been received. SDP content: v=0
+o=- 4188823414 2 IN IP4 127.0.0.1
+s=-
+t=0 0
+a=group:BUNDLE audio video
+a=msid-semantic: WMS rFAzWjP8sXtmQEbtMU6d8x0iGZjbPYiuliym
+m=audio 1 RTP/SAVPF 103 104 111 0 8 107 106 105 13 126
+c=IN IP4 0.0.0.0
+a=rtcp:1 IN IP4 0.0.0.0
+a=ice-ufrag:lIb+yfZr86c8tCpp
+a=ice-pwd:kHiPPXM6CCKpBMaTwXZ8E5xN
+a=ice-options:google-ice
+a=sendrecv
+a=mid:audio
+a=rtcp-mux
+a=crypto:1 AES_CM_128_HMAC_SHA1_80 inline:UUdssoC1uqCjWbbwzbegWzldcnaviVc6y8lOdRWz
+a=rtpmap:103 ISAC/16000
+a=rtpmap:104 ISAC/32000
+a=rtpmap:111 opus/48000/2
+a=rtpmap:0 PCMU/8000
+a=rtpmap:8 PCMA/8000
+a=rtpmap:107 CN/48000
+a=rtpmap:106 CN/32000
+a=rtpmap:105 CN/16000
+a=rtpmap:13 CN/8000
+a=rtpmap:126 telephone-event/8000
+a=ssrc:412934530 cname:fowVhvgwffV0IgJE
+a=ssrc:412934530 msid:rFAzWjP8sXtmQEbtMU6d8x0iGZjbPYiuliym a0
+a=ssrc:412934530 mslabel:rFAzWjP8sXtmQEbtMU6d8x0iGZjbPYiuliym
+a=ssrc:412934530 label:rFAzWjP8sXtmQEbtMU6d8x0iGZjbPYiuliyma0
+m=video 1 RTP/SAVPF 100 116 117
+c=IN IP4 0.0.0.0
+a=rtcp:1 IN IP4 0.0.0.0
+a=ice-ufrag:lIb+yfZr86c8tCpp
+a=ice-pwd:kHiPPXM6CCKpBMaTwXZ8E5xN
+a=ice-options:google-ice
+a=sendrecv
+a=mid:video
+a=rtcp-mux
+a=crypto:1 AES_CM_128_HMAC_SHA1_80 inline:UUdssoC1uqCjWbbwzbegWzldcnaviVc6y8lOdRWz
+a=rtpmap:100 VP8/90000
+a=rtpmap:116 red/90000
+a=rtpmap:117 ulpfec/90000
+a=ssrc:3866411545 cname:fowVhvgwffV0IgJE
+a=ssrc:3866411545 msid:rFAzWjP8sXtmQEbtMU6d8x0iGZjbPYiuliym v0
+a=ssrc:3866411545 mslabel:rFAzWjP8sXtmQEbtMU6d8x0iGZjbPYiuliym
+a=ssrc:3866411545 label:rFAzWjP8sXtmQEbtMU6d8x0iGZjbPYiuliymv0
+.
+200 GET /index.html (::1) 0.57ms
+304 GET /main.css (::1) 0.62ms
+304 GET /robochat.js (::1) 0.62ms
+304 GET /libcanvas.js (::1) 0.47ms
+Signalling channel has been closed.
+404 GET /favicon.ico (::1) 0.31ms
+Signalling channle was opened.
+SDP message has been received. SDP content: v=0
+o=- 2238337739 2 IN IP4 127.0.0.1
+s=-
+t=0 0
+a=group:BUNDLE audio video
+a=msid-semantic: WMS qXTZoUlcAI743sUe6oNmar5USve4Iuq8MQet
+m=audio 1 RTP/SAVPF 103 104 111 0 8 107 106 105 13 126
+c=IN IP4 0.0.0.0
+a=rtcp:1 IN IP4 0.0.0.0
+a=ice-ufrag:Fx4zhWX8F9MKHN63
+a=ice-pwd:edNUqAJqvQ7dpzBlQIK1f4Cz
+a=ice-options:google-ice
+a=sendrecv
+a=mid:audio
+a=rtcp-mux
+a=crypto:1 AES_CM_128_HMAC_SHA1_80 inline:dd4oLOyEDv3xtJANFbajyegRKtVjMXlqA1Iz2p1g
+a=rtpmap:103 ISAC/16000
+a=rtpmap:104 ISAC/32000
+a=rtpmap:111 opus/48000/2
+a=rtpmap:0 PCMU/8000
+a=rtpmap:8 PCMA/8000
+a=rtpmap:107 CN/48000
+a=rtpmap:106 CN/32000
+a=rtpmap:105 CN/16000
+a=rtpmap:13 CN/8000
+a=rtpmap:126 telephone-event/8000
+a=ssrc:1765018431 cname:ALlpjwEF06FR8AvM
+a=ssrc:1765018431 msid:qXTZoUlcAI743sUe6oNmar5USve4Iuq8MQet a0
+a=ssrc:1765018431 mslabel:qXTZoUlcAI743sUe6oNmar5USve4Iuq8MQet
+a=ssrc:1765018431 label:qXTZoUlcAI743sUe6oNmar5USve4Iuq8MQeta0
+m=video 1 RTP/SAVPF 100 116 117
+c=IN IP4 0.0.0.0
+a=rtcp:1 IN IP4 0.0.0.0
+a=ice-ufrag:Fx4zhWX8F9MKHN63
+a=ice-pwd:edNUqAJqvQ7dpzBlQIK1f4Cz
+a=ice-options:google-ice
+a=sendrecv
+a=mid:video
+a=rtcp-mux
+a=crypto:1 AES_CM_128_HMAC_SHA1_80 inline:dd4oLOyEDv3xtJANFbajyegRKtVjMXlqA1Iz2p1g
+a=rtpmap:100 VP8/90000
+a=rtpmap:116 red/90000
+a=rtpmap:117 ulpfec/90000
+a=ssrc:2065449517 cname:ALlpjwEF06FR8AvM
+a=ssrc:2065449517 msid:qXTZoUlcAI743sUe6oNmar5USve4Iuq8MQet v0
+a=ssrc:2065449517 mslabel:qXTZoUlcAI743sUe6oNmar5USve4Iuq8MQet
+a=ssrc:2065449517 label:qXTZoUlcAI743sUe6oNmar5USve4Iuq8MQetv0
+.
+304 GET /index.html (::1) 0.48ms
+304 GET /main.css (::1) 0.50ms
+304 GET /robochat.js (::1) 0.52ms
+304 GET /libcanvas.js (::1) 0.59ms
+Signalling channel has been closed.
+404 GET /favicon.ico (::1) 0.43ms
+15 signal has been recevied.
+Stopping roboserv application server.
+Roboserv is stopped.

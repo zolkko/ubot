@@ -1,0 +1,38 @@
+Requirements:
+    python 2.7,
+    tornado 2.3
+
+An example of gst-launch that grabs WebCam on the MacOSX :
+    gst-launch -m qtkitvideosrc device-index=0 ! \
+        video/x-raw-yuv,width=320,height=240,framerate=\(fraction\)30 ! \
+            decodebin ! \
+            ffmpegcolorspace !\
+            glimagesink
+
+An example of gst-launch command that converts source to mp4 format:
+    Container: ISO Media, MPEG v4 system, version 2
+    Video: H.264
+    Audio: AAC
+
+    gst-launch -v \
+        videotestsrc num-buffers=1000 ! \
+        x264enc pass=5 quantizer=1 speed-preset=6 profile=2 ! \
+        mp4mux ! \
+        filesink location=videotestsrc.mp4
+
+GStreamer installation
+Because Mac OS X Lion is a 64 bit operation system an old Quick time
+GStreamer plugin will not longer work. You have to use an QTKit plugin
+insteard but by default MacPorts`s gst-bad does not contain a qtkitvideosrc
+plugin so in order to grab a webcam video from iSight you will need to compile
+gst-bad your self. It could be done in the following way: First of all
+you will need to install all gst-* ports using "port install" command.
+Then you'll need to download a gst-bad tarball and from the administrative
+account executed command: ./configure --prefix=/opt/local && make && make install
+If a gstreamer registry does not automatically detect new plugins you will need
+to  delte .gstreamer* directory in you home direcotry.
+
+On Microsoft Windows System as a video source a KsVideoSrc plugin should be used.
+
+1. A mode line for vim/gvim/mvim should be:
+    # vi:si:et:sw=4:sts=4:ts=4
