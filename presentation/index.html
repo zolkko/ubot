@@ -3,20 +3,98 @@
 	<head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<title>Zombie Annihilations Industries</title>
-		<link rel="stylesheet" href="./content/style.css" type="text/css" media="screen">
+		<link rel="stylesheet" href="content/style.css" type="text/css" media="screen">
 <!--[if lt IE 7]><![endif]-->
 <!--[if IE 7]><![endif]-->
 <!--[if IE 8]><![endif]-->
         <link href="http://fonts.googleapis.com/css?family=Jura:600,500,400,300" rel="stylesheet" type="text/css" media="screen">
         <link href="http://fonts.googleapis.com/css?family=Source+Code+Pro:300,400,600,700,900" rel="stylesheet" type="text/css" media="screen">
-	    <script src="./content/jquery.js"></script>
-        <script src="./content/site.js"></script>
+        <script src="content/site.js"></script>
+        <style>
+
+		.github-ribbon{
+position: relative;
+			height: 149px; width: 149px;
+			overflow:hidden;
+			padding: 0; margin: 0;
+float:right;
+		}
+        .logo {
+            margin:10px;
+color: #a11e1e;
+            font-family:'Jura',sans-serif;
+            font-size:40px;
+            font-weight:bold;
+        }
+
+.logo p {
+    -webkit-transform:scale(0.5, 1);
+}
+		
+		.github-ribbon a {
+			display: block;
+			width: 190px;
+			font-size: 14px;
+            font-family:'Jura',sans-serif;
+			background-color: #333;
+			color: #FFF;
+			word-spacing: 2px;
+			text-decoration: none;
+			padding: 5px 15px 5px 25px;
+			
+			position:relative;
+			left: 20px;
+			top: -37px;
+			text-align: center;
+			
+			-moz-transform-origin: 0 0 ;
+			-moz-transform:rotate(45deg);
+			-moz-box-shadow:    1px 1px 5px 1px #666;
+			
+			-webkit-transform-origin: 0 0 ;	
+			-webkit-transform:rotate(45deg);
+			-webkit-box-shadow: 1px 1px 5px 1px #666;
+			
+			-ms-transform-origin: 0 0 ;	
+			-ms-transform:rotate(45deg);
+			-ms-box-shadow: 1px 1px 5px 1px #666;
+			
+			transform-origin: 0 0 ;	
+			transform:rotate(45deg);
+			box-shadow: 1px 1px 5px 1px #666;
+			
+			background-image: linear-gradient(bottom, #000000 3%, #666666 5%, #000000 7%, #000000 93%, #666666 95%, #000000 97%);
+			background-image: -o-linear-gradient(bottom, #000000 3%, #666666 5%, #000000 7%, #000000 93%, #666666 95%, #000000 97%);
+			background-image: -moz-linear-gradient(bottom, #000000 3%, #666666 5%, #000000 7%, #000000 93%, #666666 95%, #000000 97%);
+			background-image: -webkit-linear-gradient(bottom, #000000 3%, #666666 5%, #000000 7%, #000000 93%, #666666 95%, #000000 97%);
+			background-image: -ms-linear-gradient(bottom, #000000 3%, #666666 5%, #000000 7%, #000000 93%, #666666 95%, #000000 97%);
+			
+			background-image: -webkit-gradient(
+				linear,
+				left bottom,
+				left top,
+				color-stop(0.03, #000000),
+				color-stop(0.05, #666666),
+				color-stop(0.07, #000000),
+				color-stop(0.93, #000000),
+				color-stop(0.95, #666666),
+				color-stop(0.97, #000000)
+			);	
+			
+		}
+        </style>
     </head>
 </head>
 
-<body id="home">
+<body>
+    <div class="logo">
+        <img src="content/logo.png" /> <p>Umbrella Bot</p>
+    </div>
+
+    <div class="github-ribbon"><a href="#">Fork us on Github</a></div>
+
 	<div>
-		<div id="header">
+		<div class="header">
 			<div class="clearfix" style="height:2em; text-align:right;">
                 <span style="margin-right:3em;padding-top:20em;font-size:0.7em">Contact Us</span>
             </div>
@@ -27,7 +105,7 @@
 	    		<div class="featured_content">
                     <div class="slide clearfix pngimage">
                         <div class="featured-img">
-                            <a href="#"><img width="400" height="324" src="./content/logo.png" class="attachment-439x324 wp-post-image" alt="u-bot" title="u-bot"></a>
+                            <a href="/"><img width="400" height="324" src="content/ubot.png" class="attachment-439x324 wp-post-image" alt="u-bot" title=""></a>
 						</div>
 						<div class="description">
                             <h2 class="title" style="font-family:'Jura',sans-serif;font-size:4em;padding-top:1.5em">
@@ -41,8 +119,6 @@
 				</div>
             </div>
         </div>
-
-
 
         <div class="main-area">
 		    <div class="container clearfix">
@@ -79,5 +155,6 @@
             </div>
         </div>
     </div>
+
 </body>
 </html>

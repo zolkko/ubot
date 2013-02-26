@@ -1076,3 +1076,24 @@ message: {"sdpMLineIndex":1,"sdpMid":"video","candidate":"a=candidate:3664446031
 message: {"sdpMLineIndex":0,"sdpMid":"audio","candidate":"a=candidate:1873480144 1 udp 1845501695 89.22.50.59 65107 typ srflx raddr 192.168.194.114 rport 65107 generation 0\r\n"}.
 message: {"sdpMLineIndex":1,"sdpMid":"video","candidate":"a=candidate:1873480144 1 udp 1845501695 89.22.50.59 65107 typ srflx raddr 192.168.194.114 rport 65107 generation 0\r\n"}.
 Signalling channel has been closed.
+Starting roboserv.
+Starting roboserv in "." directory.
+301 GET / (::1) 0.57ms
+200 GET /index.html (::1) 38.05ms
+200 GET /app.js (::1) 6.02ms
+304 GET /main.css (::1) 0.59ms
+404 GET /favicon.ico (::1) 0.34ms
+Signalling channle was opened.
+message: {"sdp":"v=0\r\no=- 650360005 2 IN IP4 127.0.0.1\r\ns=-\r\nt=0 0\r\na=group:BUNDLE audio video\r\na=msid-semantic: WMS 5nw6gDcbGayDHEBBIrXueeb8ABNdjFLTB2N8\r\nm=audio 1 RTP/SAVPF 103 104 111 0 8 107 106 105 13 126\r\nc=IN IP4 0.0.0.0\r\na=rtcp:1 IN IP4 0.0.0.0\r\na=ice-ufrag:0M2Z8IhHOLyld1Nt\r\na=ice-pwd:xHTDgWGEkV/34U9AtQ3GWFUj\r\na=ice-options:google-ice\r\na=sendrecv\r\na=mid:audio\r\na=rtcp-mux\r\na=crypto:1 AES_CM_128_HMAC_SHA1_80 inline:Lmmv7ZTSac4T1Q2a1NHS0zHENM+ERSJditbieHfq\r\na=rtpmap:103 ISAC/16000\r\na=rtpmap:104 ISAC/32000\r\na=rtpmap:111 opus/48000/2\r\na=rtpmap:0 PCMU/8000\r\na=rtpmap:8 PCMA/8000\r\na=rtpmap:107 CN/48000\r\na=rtpmap:106 CN/32000\r\na=rtpmap:105 CN/16000\r\na=rtpmap:13 CN/8000\r\na=rtpmap:126 telephone-event/8000\r\na=ssrc:386123843 cname:kx/norum89gM8CbV\r\na=ssrc:386123843 msid:5nw6gDcbGayDHEBBIrXueeb8ABNdjFLTB2N8 a0\r\na=ssrc:386123843 mslabel:5nw6gDcbGayDHEBBIrXueeb8ABNdjFLTB2N8\r\na=ssrc:386123843 label:5nw6gDcbGayDHEBBIrXueeb8ABNdjFLTB2N8a0\r\nm=video 1 RTP/SAVPF 100 116 117\r\nc=IN IP4 0.0.0.0\r\na=rtcp:1 IN IP4 0.0.0.0\r\na=ice-ufrag:0M2Z8IhHOLyld1Nt\r\na=ice-pwd:xHTDgWGEkV/34U9AtQ3GWFUj\r\na=ice-options:google-ice\r\na=sendrecv\r\na=mid:video\r\na=rtcp-mux\r\na=crypto:1 AES_CM_128_HMAC_SHA1_80 inline:Lmmv7ZTSac4T1Q2a1NHS0zHENM+ERSJditbieHfq\r\na=rtpmap:100 VP8/90000\r\na=rtpmap:116 red/90000\r\na=rtpmap:117 ulpfec/90000\r\na=ssrc:710552891 cname:kx/norum89gM8CbV\r\na=ssrc:710552891 msid:5nw6gDcbGayDHEBBIrXueeb8ABNdjFLTB2N8 v0\r\na=ssrc:710552891 mslabel:5nw6gDcbGayDHEBBIrXueeb8ABNdjFLTB2N8\r\na=ssrc:710552891 label:5nw6gDcbGayDHEBBIrXueeb8ABNdjFLTB2N8v0\r\n"}.
+message: {"sdpMLineIndex":0,"sdpMid":"audio","candidate":"a=candidate:4077567720 1 udp 2113937151 192.168.1.10 51871 typ host generation 0\r\n"}.
+message: {"sdpMLineIndex":1,"sdpMid":"video","candidate":"a=candidate:4077567720 1 udp 2113937151 192.168.1.10 51871 typ host generation 0\r\n"}.
+message: {"sdpMLineIndex":0,"sdpMid":"audio","candidate":"a=candidate:85641020 1 udp 1845501695 95.32.50.82 51871 typ srflx raddr 192.168.1.10 rport 51871 generation 0\r\n"}.
+message: {"sdpMLineIndex":1,"sdpMid":"video","candidate":"a=candidate:85641020 1 udp 1845501695 95.32.50.82 51871 typ srflx raddr 192.168.1.10 rport 51871 generation 0\r\n"}.
+304 GET /index.html (::1) 0.56ms
+304 GET /main.css (::1) 0.61ms
+304 GET /app.js (::1) 0.91ms
+Signalling channel has been closed.
+404 GET /favicon.ico (::1) 0.30ms
+15 signal has been recevied.
+Stopping roboserv application server.
+Roboserv is stopped.
