@@ -22,15 +22,8 @@ class SignallingChannelHandler(WebSocketHandler):
         log.info('Signalling channle was opened.')
     
     def on_message(self, message):
-        if self.state == STATE_START :
-            self.state = STATE_SDP_HANDSHAKE
-            log.info('SDP message has been received. SDP content: {0}.'.format(message))
-            self.write_message('accept'.encode('utf-8'))
-            self.write_message(message)
-        else :
-            self.write_message('error'.encode('utf-8'))
-            log.warn('Unsupported state {0}. Closing connection.'.format(self.state))
-            self.close()
+        log.info('message: {0}.'.format(message))
+        self.write_message(message)
     
     def on_close(self):
         log.info('Signalling channel has been closed.')
