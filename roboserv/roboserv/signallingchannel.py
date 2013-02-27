@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 # vim:set et tabstop=4 shiftwidth=4 nu nowrap fileencoding=utf-8:
 
+import rtc
+import sdp
 import logging as log
-import json
+
 from tornado.websocket import WebSocketHandler
 
 
@@ -18,14 +20,16 @@ STATE_ERROR  = 0xfe
 STATE_CLOSED = 0xff
 
 
-class Candidate(object):
-    sdp_mline = 0
-    sdp_mid = u''
-    candidate = None
-
-
 class SignallingChannelHandler(WebSocketHandler):
+    """
+    UDP dynamic port range: 49152-65535
+    """
+    
     state = STATE_START
+    
+    remote_sdescr = None
+    
+    local_sdescr = None
     
     def open(self):
         self.state = STATE_SDP_DESCR
@@ -42,23 +46,27 @@ class SignallingChannelHandler(WebSocketHandler):
     
     def on_session_description(self, msg):
         """
-        Method determines which media streams are available and
+        Method determines which media available streams and
         sends session description back to web-application.
-
+        
         @type msg: C{str}
-        @param msg: Session description
+        @param msg: Session description. it should be utf-8 encoded string
         """
         self.state = STATE_SDP_CANDIDATE
-        self.write_message(msg)
+        self.remote_sdescr = rtc.SessionDescription(rtc.SdpType.offer, unicode(msg))
+        self.local_sdescr = rtc.SessionDescription(rtc.SdpType.answer, self.remote_sdescr.sdp)
+        self.write_message(self.local_sdescr.to_json().encode('utf-8'))
     
     def on_candidate(self, msg) :
         """
         This method selects most approprivate candidate.
 
         @type msg: C{str}
-        @param msg: SDP candidate
+        @param msg: SDP candidate, utf-8 encoded string
         """
         self.state = STATE_SDP_CANDIDATE
+        ice_candidate = rtc.IceCandidate.create_from_string(unicode(msg))
+        log.info('ice_candidate: {0}'.format(ice_candidate))
         self.write_message(msg)
     
     def on_close(self):

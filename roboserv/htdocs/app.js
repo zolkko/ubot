@@ -24,7 +24,7 @@ App = function (url, icecfg) {
 		this.pc.addStream(streams);
 		this.pc.createOffer(function (desc) {
 			self.pc.setLocalDescription(desc);
-			self.signalMessage(JSON.stringify({sdp: desc.sdp}));
+			self.signalMessage(desc.sdp);
         });
     };
 
@@ -35,8 +35,8 @@ App = function (url, icecfg) {
 	};
 
 	var onRemoteSessionDescription = function (desc) {
-		if (this.pc != null) {
-			this.pc.setRemoteDescription(new RTCSessionDescription({type: 'answer', sdp: desc.sdp}));
+		if (this.pc != null && typeof(desc.sdp) != 'undefined' && typeof(desc.type) != 'undefined') {
+			this.pc.setRemoteDescription(new RTCSessionDescription(desc));
 		}
 	};
 
