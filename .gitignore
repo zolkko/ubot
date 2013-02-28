@@ -4,3 +4,5 @@
 *.pid
 *.log
 .DS_Store
+ortpy/build
+ortpy/third_party/*
