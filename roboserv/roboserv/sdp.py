@@ -8,7 +8,7 @@ As described in http://www.ietf.org/rfc/rfc2327.txt"
 import StringIO
 
 
-__all__ = ['Candidate']
+__all__ = ['Candidate', 'SdpLineType', 'SdpAttributeType', 'MediaType']
 
 
 class CandidateComponent(object):
@@ -37,6 +37,11 @@ class SdpLineType(object):
     connection = u'c='
     encryption_key = u'k='
     attribute = u'a'
+
+
+class SdpAttributeType(object):
+    __slots__ = ['candidate']
+    candidate = u'candidate:'
 
 
 class SdpLine(object):
@@ -240,9 +245,9 @@ class Candidate(object):
         @param sdp: valid python string
         """
         if sdp is not None :
-            if not sdp.startswith(SDP_ATTRIBUTE + SDP_ATTR_CANDIDATE) :
+            if not sdp.startswith(SdpLineType.attribute + SdpAttributeType.candidate) :
                 raise ValueError('SDP candidate attribute expected.')
-            params = sdp.lstrip().split(SDP_ATTR_CANDIDATE)[1].split(' ')
+            params = sdp.lstrip().split(SdpAttributeType.candidate)[1].split(' ')
             self.foundation = params[0]
             self.component = int(params[1], 10)
             self.protocol = params[2]
