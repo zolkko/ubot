@@ -152,7 +152,7 @@ class SdpAttribute(SdpLine):
     def parse_sdp(self, sdp):
         if not sdp.startswith(SdpLineType.attribute) :
             raise ValueError('SDP attribute line expected.')
-        tmp = sdp[2:].split(:)
+        tmp = sdp[2:].split(':')
         self.name = tmp[0]
         if len(tmp) == 2:
             self.value = tmp[1]
