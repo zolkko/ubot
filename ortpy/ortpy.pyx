@@ -5,7 +5,6 @@ cdef extern from *:
     ctypedef char* const_char_ptr 'const char*'
 
 
-
 cdef extern from 'ortp/port.h':
     ctypedef unsigned char bool_t
     ctypedef unsigned int  uint32_t
@@ -183,6 +182,40 @@ SESSION_MODE_SENDONLY = 1
 SESSION_MODE_SENDRECV = 2
 
 
+cdef class __Callback(object):
+    def __init__(self, callback, usr_data = None) :
+        if not callable(callback) :
+            raise ValueError('A callable object expected.')
+        self._callback = callback
+        self._usr_data = usr_data
+    
+    def __call__(self):
+        if self._usr_data is None :
+            self._callback()
+        else :
+            self._callback(self._usr_data)
+
+
+cdef class __SignalTable(object):
+    
+    _signals = []
+    
+    cdef append_signal(self, c_RtpSession * session, const_char_ptr signal, __Callback callback):
+        self._signals.append(callback)
+        index = len(self._signals) - 1
+        rtp_session_signal_connect(session, signal, <RtpCallback>rtp_session_signal_callback, <unsigned long> index)
+    
+    def callback(self, index, params) :
+        if index >= 0 and index < len(self._signals) :
+            self._signals[index]()
+        else :
+            raise IndexError('callback index {0} is out of range.'.format(index))
+
+
+cdef __SignalTable signal_table
+signal_table = __SignalTable()
+
+
 cdef class RtpSession(object):
     """
     Incapsulates RTP/RTCP session
@@ -231,12 +264,9 @@ cdef class RtpSession(object):
         if not isinstance(signal, unicode) :
             raise TypeError('signal parameter should be of unicode type.')
         if u'ssrc_changed' == signal :
-            # if len(self._ssrc_changed_signals) == 0 :
-            #    str_signal = signal.encode('utf-8')
-            #    __ssrc_pyobject_map[<unsigned long>self._session] = self
-            #    rtp_session_signal_connect(self._session, signal, <RtpCallback>rtp_session_ssrc_changed_signal, user_data)
-            # self._ssrc_changed_signals.append(callback)
-            pass
+            global signal_table
+            str_signal = signal.encode('utf-8')
+            signal_table.append_signal(self._session, str_signal, __Callback(callback, user_data))
         else :
             raise ValueError('signal is not supported.')
     
@@ -246,27 +276,28 @@ cdef class RtpSession(object):
             self._session = NULL
 
 
-# "ssrc_changed"
-# "payload_type_changed"
-# "telephone-event"
-# "telephone-event_packet"
-# "timestamp_jump"
-# "network_error"
-# "rtcp_bye"
-
-# __ssrc_pyobject_map = {}
-
-# cdef rtp_session_ssrc_changed_signal(c_RtpSession * session):
-#    key = <unsigned long>session
-#    if key in __ssrc_pyobject_map :
-#        __ssrc_pyobject_map[key].do_ssrc_changed()
+cdef extern from 'stdarg.h':
+    ctypedef struct va_list:
+        pass
+    ctypedef struct fake_type:
+        pass
+    void  va_start(va_list, void* arg)
+    void* va_arg(va_list, fake_type)
+    void  va_end(va_list)
+    fake_type ul_type 'unsigned long'
 
 
-# cdef rtp_session_signal_callback(c_RtpSession * session, ...) :
-#    cdef va_list args 
-#    va_start(args, <void*>n)
-#    params = []
-#    while n != 0 :
-#        params.append(<int>va_arg(args, int_type))
-#    va_end(args)
+cdef rtp_session_signal_callback(c_RtpSession * session, ...) :
+    cdef va_list args
+    va_start(args, <void*>session)
+    params = []
+    cdef unsigned long val = 1
+    while val != 0 :
+        val = <unsigned long>va_arg(args, ul_type)
+        params.append(val)
+    va_end(args)
+    index = params[-1:]
+    if len(index) == 1 :
+        global signal_table
+        signal_table.callback(index[0], params[:-1])
 

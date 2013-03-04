@@ -16,6 +16,11 @@ if sys.platform == 'win32' :
                r'C:\Program Files\Microsoft SDKs\Windows\v6.0A\Include',
                r'C:\Program Files (x86)\Microsoft SDKs\Windows\v6.0A\Include']
     defines = [('WIN32', 1)]
+elif sys.platform == 'darwin' :
+    libpath = []
+    libs = ['ortp', 'pthread']
+    incpath = ['/System//Library/Frameworks/Python.framework/Versions/2.7/include/python2.7/', r'/usr/local/include/']
+    defines = []
 else :
     libpath = []
     libs    = []
