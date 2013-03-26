@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 # vim:set et tabstop=4 shiftwidth=4 nu nowrap fileencoding=utf-8:
 
+import socket
+
+
 cdef extern from *:
     ctypedef char* const_char_ptr 'const char*'
 
@@ -16,92 +19,6 @@ cdef extern from 'ortp/port.h':
     void * ortp_malloc0(size_t sz)
 
 
-cdef extern from 'ortp/payloadtype.h':
-    ctypedef struct c_PayloadType 'PayloadType':
-        pass
-    c_PayloadType *payload_type_new()
-
-
-cdef class PayloadType(object):
-    cdef c_PayloadType * _payload_type
-    
-    def __init__(self):
-        self._payload_type = NULL
-
-
-cdef extern from 'ortp/payloadtype.h':
-    ctypedef struct c_RtpProfile 'RtpProfile':
-        char * name
-    c_RtpProfile * rtp_profile_new(const_char_ptr name)
-    void rtp_profile_destroy(c_RtpProfile * prof)
-    c_RtpProfile * rtp_profile_clone(c_RtpProfile * prof)
-    c_RtpProfile * rtp_profile_clone_full(c_RtpProfile * prof)
-    void rtp_profile_set_name(c_RtpProfile * prof, const_char_ptr name)
-
-
-cdef class RtpProfile(object):
-    cdef c_RtpProfile * _profile
-    
-    def __init__(self, name = None):
-        if name is None :
-            self._profile = NULL
-        else :
-            if not isinstance(name, unicode) :
-                raise ValueError('Unicode name expected.')
-            str_name = name.encode('utf-8')
-            self._profile = rtp_profile_new(str_name)
-    
-    def get_name(self):
-        """
-        Return profile's name or None if profile is not set.
-        """
-        if self._profile == NULL:
-            return None
-        else :
-            return unicode(self._profile.name)
-    
-    def set_name(self, name):
-        """
-        Sets profile name. name parameter should be of unicode type.
-        """
-        if not isinstance(name, unicode) :
-            raise ValueError('Unicode name expected.')
-        
-        if self._profile == NULL :
-            str_name = name.encode('utf-8')
-            self._profile = rtp_profile_new(str_name)
-        else :
-            str_name = name.encode('utf-8')
-            rtp_profile_set_name(self._profile, str_name)
-    
-    def clone(self):
-        """
-        Creates profile clone.
-        """
-        if self._profile == NULL :
-            return None
-        else :
-            oclone = RtpProfile()
-            oclone._profile = rtp_profile_clone(self._profile)
-            return oclone
-    
-    def clone_full(self):
-        """
-        Creates full profile clone.
-        """
-        if self._profile == NULL :
-            return None
-        else :
-            oclone = RtpProfile()
-            oclone._profile = rtp_profile_clone_full(self._profile)
-            return oclone
-    
-    def __dealloc__(self):
-        if self._profile != NULL:
-            rtp_profile_destroy(self._profile)
-            self._profile = NULL
-
-
 cdef extern from 'ortp/ortp.h':
     void ortp_init()
     void ortp_scheduler_init()
@@ -115,6 +32,7 @@ ORTP_WARNING = 1 << 2
 ORTP_ERROR = 1 << 3
 ORTP_FATAL = 1 << 4
 ORTP_LOGLEV_END = 1 << 5
+
 
 ORTP_LOG_DEFAULT = ORTP_DEBUG | ORTP_MESSAGE | ORTP_WARNING | ORTP_ERROR
 
@@ -150,11 +68,21 @@ cdef extern from 'ortp/rtpsession.h':
         RTP_SESSION_SENDONLY,
         RTP_SESSION_SENDRECV
     
-    cdef struct _RtpSession:
-        pass
+    ctypedef int ortp_socket_t
+    
+    ctypedef struct c_RtpStream 'RtpStream':
+        ortp_socket_t socket
+        int sockfamily
+        int loc_port
+    
+    ctypedef struct c_RtcpStream 'RtcpStream':
+        ortp_socket_t socket
+        int sockfamily
+        int loc_port
     
     ctypedef struct c_RtpSession 'RtpSession':
-        pass
+        c_RtpStream rtp
+        c_RtcpStream rtcp
     
     c_RtpSession *rtp_session_new(int mode)
     void rtp_session_destroy(c_RtpSession * ptr)
@@ -164,6 +92,7 @@ cdef extern from 'ortp/rtpsession.h':
     void rtp_session_set_symmetric_rtp (c_RtpSession *session, bool_t yesno)
     int rtp_session_set_payload_type(c_RtpSession *session, int pt)
     int rtp_session_set_local_addr(c_RtpSession *session, const_char_ptr addr, int port)
+    int rtp_session_set_remote_addr(c_RtpSession *session, const_char_ptr addr, int port)
     void rtp_session_enable_adaptive_jitter_compensation(c_RtpSession *session, bool_t val)
     void rtp_session_set_jitter_compensation(c_RtpSession *session, int milisec)
     int rtp_session_recv_with_ts(c_RtpSession *session, uint8_t *buffer, int len, uint32_t ts, int *have_more)
@@ -216,6 +145,35 @@ cdef __SignalTable signal_table
 signal_table = __SignalTable()
 
 
+cdef class Buffer(object):
+    cdef uint8_t * buff
+    cdef int size
+    cdef int count
+    
+    def __init__(self, size) :
+        self.buff = <uint8_t *>ortp_malloc0(size)
+        self.size = size
+        self.count = 0
+    
+    def has_data(self):
+        return self.count > 0
+    
+    def data_len(self):
+        return self.count
+    
+    def __len__(self):
+        return self.count
+    
+    def data(self):
+        cdef bytes py_str = self.buff[:self.count]
+        return py_str
+    
+    def __dealloc__(self) :
+        if self.buff != NULL :
+            ortp_free(<void *>self.buff)
+            self.buff = NULL
+
+
 cdef class RtpSession(object):
     """
     Incapsulates RTP/RTCP session
@@ -232,18 +190,28 @@ cdef class RtpSession(object):
         self._session = rtp_session_new(mode)
     
     def set_scheduling_mode(self, yesno):
+        if not (isinstance(yesno, bool) or isinstance(yesno, int)) :
+            raise TypeError('bool or int expected')
         rtp_session_set_scheduling_mode(self._session, yesno)
     
     def set_blocking_mode(self, yesno):
+        if not (isinstance(yesno, bool) or isinstance(yesno, int)) :
+            raise TypeError('bool or int expected')
         rtp_session_set_blocking_mode(self._session, yesno)
     
     def set_connected_mode(self, yesno):
+        if not (isinstance(yesno, bool) or isinstance(yesno, int)) :
+            raise TypeError('bool or int expected')
         rtp_session_set_connected_mode(self._session, yesno)
     
     def set_symmetric_rtp(self, yesno):
+        if not (isinstance(yesno, bool) or isinstance(yesno, int)) :
+            raise TypeError('bool or int expected')
         rtp_session_set_symmetric_rtp(self._session, yesno)
     
     def set_payload_type(self, pt):
+        if not isinstance(pt, int) :
+            raise TypeError('int expected')
         rtp_session_set_payload_type(self._session, pt)
     
     def set_local_addr(self, addr, port):
@@ -252,13 +220,47 @@ cdef class RtpSession(object):
         if not isinstance(port, int):
             raise TypeError('port parameter should be of int type.')
         str_addr = addr.encode('utf-8')
-        rtp_session_set_local_addr(self._session, str_addr, port)
+        cdef int res = rtp_session_set_local_addr(self._session, str_addr, port)
+        return (res == 0)
+    
+    def set_local_socket(self, rtp_socket, rtcp_socket = None):
+        if not isinstance(rtp_socket, socket.socket) :
+            raise TypeError('rtp_socket should be of socket.socket type.')
+        if not isinstance(rtcp_socket, socket.socket) :
+            raise TypeError('rtcp_socket should be of socket.socket type.')
+        
+        rtp_addr, rtp_port = rtp_socket.getsockname()
+        self._session.rtp.sockfamily = rtp_socket.family
+        self._session.rtp.socket = rtp_socket.fileno()
+        self._session.rtp.loc_port = rtp_port
+        # set rtcp socket
+        self._session.rtcp.socket = rtcp_socket.fileno()
+        self._session.rtcp.sockfamily = rtcp_socket.family
+    
+    def set_remote_addr(self, addr, port) :
+        if not (isinstance(addr, str) or isinstance(addr, unicode)) :
+            raise TypeError('addr should be of str or unicode type.')
+        if not isinstance(port, int) :
+            raise TypeError('port should be of int type.')
+        u8_addr = addr.encode('utf-8')
+        cdef int res = rtp_session_set_remote_addr(self._session, u8_addr, port)
+        return (res == 0)
+    
+    def has_socket(self):
+        return self._session.rtp.socket != -1
     
     def enable_adaptive_jitter_compensation(self, yesno):
         rtp_session_enable_adaptive_jitter_compensation(self._session, yesno)
     
     def set_jitter_compensation(self, milisec):
         rtp_session_set_jitter_compensation(self._session, milisec)
+    
+    cpdef recv_with_ts(self, Buffer buffer, uint32_t ts):
+        """ Returns tuple (buffer, have_more) """
+        if not isinstance(buffer, Buffer) :
+            raise TypeError('buffer must be of ortpy.Buffer type')
+        cdef int have_more = 0
+        buffer.count = rtp_session_recv_with_ts(self._session, buffer.buff, buffer.size, ts, &have_more)
     
     def signal_connect(self, signal, callback, user_data):
         if not isinstance(signal, unicode) :
@@ -300,4 +302,3 @@ cdef rtp_session_signal_callback(c_RtpSession * session, ...) :
     if len(index) == 1 :
         global signal_table
         signal_table.callback(index[0], params[:-1])
-
