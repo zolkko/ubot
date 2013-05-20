@@ -28,6 +28,7 @@ class Application(web.Application):
         handlers = [
             (r'/', web.RedirectHandler, {'url': '/index.html', 'permanent': True}),
             (r'/sc', SignallingChannelHandler),
+            (r'/client', SignallingChannelHandler),
             (r'/(.+)', web.StaticFileHandler, {'path': os.path.join(basedir, 'htdocs')})
         ]
         super(Application, self).__init__(handlers, **settings)

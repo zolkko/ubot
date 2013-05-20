@@ -5,8 +5,21 @@
 		<title>Umbrella Bot Server</title>
 		<link rel="stylesheet" href="main.css" type="text/css" />
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+		<script src="fabricjs.min.js"></script>
 		<script src="app.js"></script>
 		<script>
+			$(function () {
+				var canvas = new fabric.Canvas('met', {selection: true});
+				var circle = new fabric.Circle({
+					top: 50,
+					left: 50,
+					stroke: 'black',
+					strokeWidth: 8,
+					fill: 'white',
+					radius: 30
+				});
+				canvas.add(circle);
+			});
             $(function () {
 				var app = new App('ws://' + window.location.host + '/sc');
 				if (!app.isBrowserSupported()) {

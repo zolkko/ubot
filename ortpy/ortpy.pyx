@@ -150,6 +150,7 @@ cdef class Buffer(object):
     cdef int size
     cdef int count
     
+    # decare - tune.
     def __init__(self, size) :
         self.buff = <uint8_t *>ortp_malloc0(size)
         self.size = size
@@ -247,6 +248,7 @@ cdef class RtpSession(object):
         return (res == 0)
     
     def has_socket(self):
+        # testing
         return self._session.rtp.socket != -1
     
     def enable_adaptive_jitter_compensation(self, yesno):
