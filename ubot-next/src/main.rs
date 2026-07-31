@@ -67,8 +67,9 @@ async fn main(spawner: Spawner) {
         ..Default::default()
     };
 
+    info!("initialize softdevice");
     let sd = Softdevice::enable(&sd_config);
-    let server = unwrap!(Server::new(sd));
+    let server = Server::new(sd).unwrap();
     spawner.spawn(unwrap!(ble::softdevice_task(sd)));
 
     let drive = TrackDrive::new(
