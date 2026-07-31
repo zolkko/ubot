@@ -1,0 +1,290 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		E7DA17D557B34BDB81CF0D4A /* UbotPadApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D575CCD39E5F4FCD98AA7062 /* UbotPadApp.swift */; };
+		E3CFB267B9734DFD9B127247 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55603C3102964F80BE9FC954 /* ContentView.swift */; };
+		114EB01E160343DE99C0482E /* SpeedometerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 981A62CEBD9F420AADF553B4 /* SpeedometerView.swift */; };
+		58CCB28165DA4E408A504E59 /* GameControllerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3866359EE2E54E78851A955D /* GameControllerManager.swift */; };
+		227E658FE62341A08492B719 /* BLEManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5090C8C9AC34B9A97FDEC89 /* BLEManager.swift */; };
+		36978A0C9401451DB7D96D0F /* ControlPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4566A734B74274A86046B4 /* ControlPacket.swift */; };
+		D009A5D0607C4A0A9AC82F07 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EF20978D2E1243CFBE03C63D /* Assets.xcassets */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		805D1BF785024DE280C16750 /* UbotPad.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UbotPad.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D575CCD39E5F4FCD98AA7062 /* UbotPadApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UbotPadApp.swift; sourceTree = "<group>"; };
+		55603C3102964F80BE9FC954 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		981A62CEBD9F420AADF553B4 /* SpeedometerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeedometerView.swift; sourceTree = "<group>"; };
+		3866359EE2E54E78851A955D /* GameControllerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameControllerManager.swift; sourceTree = "<group>"; };
+		D5090C8C9AC34B9A97FDEC89 /* BLEManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BLEManager.swift; sourceTree = "<group>"; };
+		8F4566A734B74274A86046B4 /* ControlPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlPacket.swift; sourceTree = "<group>"; };
+		EF20978D2E1243CFBE03C63D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		F5938D0DD0AA48268E03F88B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		34453DF338B24BBE85069481 = {
+			isa = PBXGroup;
+			children = (
+				17E6A236F7E9423F9B7F4288 /* UbotPad */,
+				67F2070EBAF6488BAF6FBA83 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		17E6A236F7E9423F9B7F4288 /* UbotPad */ = {
+			isa = PBXGroup;
+			children = (
+				D575CCD39E5F4FCD98AA7062 /* UbotPadApp.swift */,
+				55603C3102964F80BE9FC954 /* ContentView.swift */,
+				981A62CEBD9F420AADF553B4 /* SpeedometerView.swift */,
+				3866359EE2E54E78851A955D /* GameControllerManager.swift */,
+				D5090C8C9AC34B9A97FDEC89 /* BLEManager.swift */,
+				8F4566A734B74274A86046B4 /* ControlPacket.swift */,
+				EF20978D2E1243CFBE03C63D /* Assets.xcassets */,
+			);
+			path = UbotPad;
+			sourceTree = "<group>";
+		};
+		67F2070EBAF6488BAF6FBA83 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				805D1BF785024DE280C16750 /* UbotPad.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A6810B7A42EB4EA0AA9719A9 /* UbotPad */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A3F49D308FEB45B38B8AEE2C /* Build configuration list for PBXNativeTarget "UbotPad" */;
+			buildPhases = (
+				6D6DF14B39A844C5838235C5 /* Sources */,
+				F5938D0DD0AA48268E03F88B /* Frameworks */,
+				25A169F957DD4BD9B9703F2B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = UbotPad;
+			productName = UbotPad;
+			productReference = 805D1BF785024DE280C16750 /* UbotPad.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		70D8D8E7F1CB4C638D991A25 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1620;
+				LastUpgradeCheck = 1620;
+				TargetAttributes = {
+					A6810B7A42EB4EA0AA9719A9 = {
+						CreatedOnToolsVersion = 16.2;
+					};
+				};
+			};
+			buildConfigurationList = 2C9DA7A987A84FB591F643AB /* Build configuration list for PBXProject "UbotPad" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 34453DF338B24BBE85069481;
+			productRefGroup = 67F2070EBAF6488BAF6FBA83 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A6810B7A42EB4EA0AA9719A9 /* UbotPad */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		25A169F957DD4BD9B9703F2B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D009A5D0607C4A0A9AC82F07 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		6D6DF14B39A844C5838235C5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E7DA17D557B34BDB81CF0D4A /* UbotPadApp.swift in Sources */,
+				E3CFB267B9734DFD9B127247 /* ContentView.swift in Sources */,
+				114EB01E160343DE99C0482E /* SpeedometerView.swift in Sources */,
+				58CCB28165DA4E408A504E59 /* GameControllerManager.swift in Sources */,
+				227E658FE62341A08492B719 /* BLEManager.swift in Sources */,
+				36978A0C9401451DB7D96D0F /* ControlPacket.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		AB8B6486C22141AB84FCEDE1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		57C0E1C7E740403EB031C9CA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_VERSION = 5.0;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		3DE5E3F0F27D484C82E5BF2D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GENERATE_ASSET_SYMBOLS = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Ubot2 uses Bluetooth to connect to your track robot.";
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIStatusBarHidden = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ubot.UbotPad";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		138767B16E014DF086BAAA50 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GENERATE_ASSET_SYMBOLS = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Ubot2 uses Bluetooth to connect to your track robot.";
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UIStatusBarHidden = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ubot.UbotPad";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		2C9DA7A987A84FB591F643AB /* Build configuration list for PBXProject "UbotPad" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AB8B6486C22141AB84FCEDE1 /* Debug */,
+				57C0E1C7E740403EB031C9CA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A3F49D308FEB45B38B8AEE2C /* Build configuration list for PBXNativeTarget "UbotPad" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3DE5E3F0F27D484C82E5BF2D /* Debug */,
+				138767B16E014DF086BAAA50 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 70D8D8E7F1CB4C638D991A25 /* Project object */;
+}
