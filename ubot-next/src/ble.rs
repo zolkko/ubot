@@ -62,7 +62,9 @@ pub async fn controller_task(
             scan_data: &SCAN_DATA,
         };
         info!("advertising as \"Ubot2\", waiting for the iOS app to connect");
-        let conn = unwrap!(peripheral::advertise_connectable(sd, adv, &config).await);
+        let conn = peripheral::advertise_connectable(sd, adv, &config)
+            .await
+            .unwrap(); // TODO: fixme
         info!("iOS app connected");
 
         let e = gatt_server::run(&conn, server, |e| match e {
@@ -73,6 +75,7 @@ pub async fn controller_task(
         })
         .await;
 
-        info!("iOS app disconnected: {:?}", e);
+        // info!("iOS app disconnected: {:?}", e.to_string());
+        info!("iOS app disconnected");
     }
 }
