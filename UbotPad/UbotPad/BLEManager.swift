@@ -17,15 +17,20 @@ enum RobotConnectionState: Equatable {
 final class BLEManager: NSObject, ObservableObject {
     nonisolated static let serviceUUID = CBUUID(string: "6F0F6A4E-5A3B-4B8E-9B0A-1F2E3D4C5B6A")
     nonisolated static let controlCharUUID = CBUUID(string: "6F0F6A4E-5A3B-4B8E-9B0A-1F2E3D4C5B6B")
+    nonisolated static let distanceCharUUID = CBUUID(string: "6F0F6A4E-5A3B-4B8E-9B0A-1F2E3D4C5B6C")
 
     /// Minimum spacing between writes so a fast-changing controller doesn't flood the link.
     private static let minSendInterval: TimeInterval = 1.0 / 30.0
 
     @Published private(set) var state: RobotConnectionState = .disconnected
+    /// Latest ultrasonic ranging reading from the robot, in millimeters. `nil` until the
+    /// first notification arrives (or after a disconnect).
+    @Published private(set) var distanceMm: UInt16?
 
     private var central: CBCentralManager!
     private var robotPeripheral: CBPeripheral?
     private var controlCharacteristic: CBCharacteristic?
+    private var distanceCharacteristic: CBCharacteristic?
     private var lastSendTime: Date = .distantPast
 
     override init() {
@@ -89,6 +94,8 @@ extension BLEManager: CBCentralManagerDelegate {
     ) {
         Task { @MainActor in
             controlCharacteristic = nil
+            distanceCharacteristic = nil
+            distanceMm = nil
             robotPeripheral = nil
             state = .disconnected
             startScanning()
@@ -111,7 +118,7 @@ extension BLEManager: CBPeripheralDelegate {
     nonisolated func peripheral(_ peripheral: CBPeripheral, didDiscoverServices error: Error?) {
         guard let services = peripheral.services else { return }
         for service in services where service.uuid == Self.serviceUUID {
-            peripheral.discoverCharacteristics([Self.controlCharUUID], for: service)
+            peripheral.discoverCharacteristics([Self.controlCharUUID, Self.distanceCharUUID], for: service)
         }
     }
 
@@ -121,11 +128,35 @@ extension BLEManager: CBPeripheralDelegate {
         error: Error?
     ) {
         guard let characteristics = service.characteristics else { return }
-        for characteristic in characteristics where characteristic.uuid == Self.controlCharUUID {
-            Task { @MainActor in
-                controlCharacteristic = characteristic
-                state = .connected(name: peripheral.name ?? "Ubot")
+        for characteristic in characteristics {
+            switch characteristic.uuid {
+            case Self.controlCharUUID:
+                Task { @MainActor in
+                    controlCharacteristic = characteristic
+                    state = .connected(name: peripheral.name ?? "Ubot")
+                }
+            case Self.distanceCharUUID:
+                Task { @MainActor in
+                    distanceCharacteristic = characteristic
+                }
+                peripheral.setNotifyValue(true, for: characteristic)
+            default:
+                break
             }
+        }
+    }
+
+    nonisolated func peripheral(
+        _ peripheral: CBPeripheral,
+        didUpdateValueFor characteristic: CBCharacteristic,
+        error: Error?
+    ) {
+        guard characteristic.uuid == Self.distanceCharUUID,
+              let data = characteristic.value, data.count >= 2
+        else { return }
+        let mm = UInt16(data[data.startIndex]) | (UInt16(data[data.startIndex + 1]) << 8)
+        Task { @MainActor in
+            distanceMm = mm
         }
     }
 }

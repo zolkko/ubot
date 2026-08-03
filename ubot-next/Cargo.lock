@@ -651,6 +651,7 @@ version = "0.9.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "25ba4bd83f9415b58b4ed8dc5714c76e626a105be4646c02630ad730ad3b5aa4"
 dependencies = [
+ "defmt",
  "hash32",
  "stable_deref_trait",
 ]
@@ -752,10 +753,11 @@ dependencies = [
 [[package]]
 name = "nrf-softdevice"
 version = "0.1.0"
-source = "git+https://github.com/embassy-rs/nrf-softdevice#47d6121c6e823120e8b883a7ac75f44ce7daa3aa"
+source = "git+https://github.com/zolkko/nrf-softdevice?branch=defmt_upgrade#fee18d7934e07ad112ee6846e961f7723c211ae9"
 dependencies = [
  "cortex-m",
  "critical-section",
+ "defmt",
  "embassy-futures",
  "embassy-sync",
  "embedded-storage",
@@ -771,7 +773,7 @@ dependencies = [
 [[package]]
 name = "nrf-softdevice-macro"
 version = "0.1.0"
-source = "git+https://github.com/embassy-rs/nrf-softdevice#47d6121c6e823120e8b883a7ac75f44ce7daa3aa"
+source = "git+https://github.com/zolkko/nrf-softdevice?branch=defmt_upgrade#fee18d7934e07ad112ee6846e961f7723c211ae9"
 dependencies = [
  "Inflector",
  "darling 0.13.4",
@@ -784,7 +786,7 @@ dependencies = [
 [[package]]
 name = "nrf-softdevice-s140"
 version = "0.1.2"
-source = "git+https://github.com/embassy-rs/nrf-softdevice#47d6121c6e823120e8b883a7ac75f44ce7daa3aa"
+source = "git+https://github.com/zolkko/nrf-softdevice?branch=defmt_upgrade#fee18d7934e07ad112ee6846e961f7723c211ae9"
 
 [[package]]
 name = "nu-ansi-term"
@@ -1141,7 +1143,6 @@ dependencies = [
  "embassy-time",
  "heapless",
  "nrf-softdevice",
- "nrf-softdevice-s140",
  "panic-probe",
  "static_cell",
 ]

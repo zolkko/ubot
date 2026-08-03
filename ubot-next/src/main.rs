@@ -5,6 +5,7 @@ mod ble;
 mod gamepad;
 mod motors;
 mod robot;
+mod ultrasonic;
 
 use core::mem;
 
@@ -20,6 +21,7 @@ use nrf_softdevice::{Softdevice, raw};
 use crate::ble::Server;
 use crate::gamepad::GamepadState;
 use crate::motors::TrackDrive;
+use crate::ultrasonic::UltrasonicSensor;
 
 static GAMEPAD_CHANNEL: Channel<ThreadModeRawMutex, GamepadState, 8> = Channel::new();
 
@@ -32,6 +34,9 @@ async fn main(spawner: Spawner) {
     let p = embassy_nrf::init(config);
 
     info!("ubot-next boot");
+
+    // DFRobot Gravity Ultrasonic Sensor 2.0 (URM09): SIG -> P0.11.
+    let distance_sensor = UltrasonicSensor::new(p.P0_11);
 
     let sd_config = nrf_softdevice::Config {
         clock: Some(raw::nrf_clock_lf_cfg_t {
@@ -92,7 +97,8 @@ async fn main(spawner: Spawner) {
     spawner.spawn(unwrap!(ble::controller_task(
         sd,
         server,
-        GAMEPAD_CHANNEL.sender()
+        GAMEPAD_CHANNEL.sender(),
+        distance_sensor,
     )));
     spawner.spawn(unwrap!(robot_task(GAMEPAD_CHANNEL.receiver(), drive)));
 }
