@@ -19,7 +19,23 @@ use bitflags::bitflags;
 
 pub const PACKET_LEN: usize = 9;
 
-pub(crate) type Packet = [u8; PACKET_LEN];
+#[derive(Default, Clone, Copy)]
+#[repr(transparent)]
+pub(crate) struct Packet {
+    inner: [u8; PACKET_LEN],
+}
+
+impl From<[u8; PACKET_LEN]> for Packet {
+    fn from(inner: [u8; PACKET_LEN]) -> Self {
+        Self { inner }
+    }
+}
+
+impl AsRef<[u8]> for Packet {
+    fn as_ref(&self) -> &[u8] {
+        &self.inner
+    }
+}
 
 const AXIS_DEADZONE: f32 = 0.08;
 
@@ -58,6 +74,12 @@ pub struct GamepadState {
     pub rt: f32,
     pub dpad: u8,
     pub buttons: Buttons,
+}
+
+impl From<Packet> for GamepadState {
+    fn from(packet: Packet) -> Self {
+        parse_packet(&packet.inner)
+    }
 }
 
 fn axis(raw: i8) -> f32 {

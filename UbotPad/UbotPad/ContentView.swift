@@ -7,6 +7,7 @@ struct ContentView: View {
     var body: some View {
         VStack(spacing: 16) {
             statusBar
+            distanceBar
 
             HStack(spacing: 24) {
                 SpeedometerView(speed: abs(gameController.packet.ly), label: "LEFT TRACK")
@@ -60,6 +61,25 @@ struct ContentView: View {
         case .poweredOff: return .red
         default: return .secondary
         }
+    }
+
+    private var distanceBar: some View {
+        HStack {
+            Label(distanceLabel, systemImage: "sensor.tag.radiowaves.forward")
+                .foregroundStyle(distanceColor)
+            Spacer()
+        }
+        .font(.subheadline)
+    }
+
+    private var distanceLabel: String {
+        guard let mm = ble.distanceMm else { return "Distance: --" }
+        return String(format: "Distance: %.0f cm", Double(mm) / 10)
+    }
+
+    private var distanceColor: Color {
+        guard let mm = ble.distanceMm else { return .secondary }
+        return mm < 200 ? .red : .secondary
     }
 }
 
