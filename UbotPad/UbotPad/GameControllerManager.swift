@@ -1,17 +1,23 @@
 import Foundation
 import GameController
+import TouchController
 import Combine
 
-/// Reads an Xbox controller (or any `extendedGamepad`-profile controller) already paired
-/// with the iPhone via iOS Bluetooth settings, and publishes its state as a `ControlPacket`.
+@Observable
 @MainActor
-final class GameControllerManager: ObservableObject {
-    @Published private(set) var packet = ControlPacket()
-    @Published private(set) var controllerName: String?
+final class GameControllerManager {
+    private(set) var packet = ControlPacket()
+    private(set) var controllerName: String?
 
+    @ObservationIgnored
     private var observers: [NSObjectProtocol] = []
+    
+    @ObservationIgnored
+    private let touchController: TouchControllerManager?
 
-    init() {
+    init(ignoring touchController: TouchControllerManager? = nil) {
+        self.touchController = touchController
+
         observers.append(
             NotificationCenter.default.addObserver(
                 forName: .GCControllerDidConnect, object: nil, queue: .main
@@ -20,9 +26,9 @@ final class GameControllerManager: ObservableObject {
                 Task { @MainActor [weak self] in
                     self?.attach(controller)
                 }
-                
             }
         )
+
         observers.append(
             NotificationCenter.default.addObserver(
                 forName: .GCControllerDidDisconnect, object: nil, queue: .main
@@ -35,16 +41,24 @@ final class GameControllerManager: ObservableObject {
         )
 
         GCController.startWirelessControllerDiscovery(completionHandler: nil)
-        if let controller = GCController.controllers().first {
+        if let controller = GCController.controllers().first(where: { [weak self] in self?.isPhysical($0) ?? true }) {
             attach(controller)
         }
     }
 
     deinit {
-        observers.forEach(NotificationCenter.default.removeObserver)
+        Task { @MainActor [weak self] in
+            self?.observers.forEach(NotificationCenter.default.removeObserver)
+        }
+    }
+
+    private func isPhysical(_ controller: GCController) -> Bool {
+        controller !== touchController?.virtualController
     }
 
     private func attach(_ controller: GCController) {
+        guard isPhysical(controller) else { return }
+
         controllerName = controller.vendorName ?? "Controller"
         guard let gamepad = controller.extendedGamepad else { return }
 
@@ -57,12 +71,15 @@ final class GameControllerManager: ObservableObject {
     }
 
     private func detach(_ controller: GCController) {
+        guard isPhysical(controller) else { return }
+
         controllerName = nil
         packet = ControlPacket()
     }
 
     private func update(from gamepad: GCExtendedGamepad) {
         var mask: ButtonMask = []
+
         if gamepad.buttonA.isPressed { mask.insert(.a) }
         if gamepad.buttonB.isPressed { mask.insert(.b) }
         if gamepad.buttonX.isPressed { mask.insert(.x) }
@@ -99,5 +116,7 @@ final class GameControllerManager: ObservableObject {
             buttons: mask,
             dpad: dpad
         )
+
+        AppLogger.app.debug("Game Controller updated")
     }
 }

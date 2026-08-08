@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// An arc gauge showing commanded speed (0...1). There's no wheel encoder feedback from
-/// the robot, so this reflects the throttle being sent, not measured velocity.
+
 struct SpeedometerView: View {
     var speed: Float // 0...1
     var label: String
@@ -44,7 +43,7 @@ struct SpeedometerView: View {
                     Text("\(Int(speed * 100))%")
                         .font(.system(size: size * 0.12, weight: .bold, design: .rounded))
                         .monospacedDigit()
-                    Text(label)
+                    Image(systemName: label)
                         .font(.system(size: size * 0.06))
                         .foregroundStyle(.secondary)
                     Spacer().frame(height: size * 0.12)

@@ -1,6 +1,7 @@
 import Foundation
 import CoreBluetooth
 
+
 enum RobotConnectionState: Equatable {
     case poweredOff
     case scanning
@@ -13,8 +14,9 @@ enum RobotConnectionState: Equatable {
 
 /// BLE central that scans for the "Ubot" peripheral (see `ubot-next/src/ble.rs`) and writes
 /// `ControlPacket`s to its control characteristic. UUIDs here must match that file exactly.
+@Observable
 @MainActor
-final class BLEManager: NSObject, ObservableObject {
+final class BLEManager: NSObject /*, ObservableObject */ {
     nonisolated static let serviceUUID = CBUUID(string: "6F0F6A4E-5A3B-4B8E-9B0A-1F2E3D4C5B6A")
     nonisolated static let controlCharUUID = CBUUID(string: "6F0F6A4E-5A3B-4B8E-9B0A-1F2E3D4C5B6B")
     nonisolated static let distanceCharUUID = CBUUID(string: "6F0F6A4E-5A3B-4B8E-9B0A-1F2E3D4C5B6C")
@@ -22,10 +24,13 @@ final class BLEManager: NSObject, ObservableObject {
     /// Minimum spacing between writes so a fast-changing controller doesn't flood the link.
     private static let minSendInterval: TimeInterval = 1.0 / 30.0
 
-    @Published private(set) var state: RobotConnectionState = .disconnected
+    // published
+    private(set) var state: RobotConnectionState = .disconnected
+
+    // published
     /// Latest ultrasonic ranging reading from the robot, in millimeters. `nil` until the
     /// first notification arrives (or after a disconnect).
-    @Published private(set) var distanceMm: UInt16?
+    private(set) var distanceMm: UInt16?
 
     private var central: CBCentralManager!
     private var robotPeripheral: CBPeripheral?

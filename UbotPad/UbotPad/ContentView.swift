@@ -1,24 +1,50 @@
 import SwiftUI
 
+
 struct ContentView: View {
-    @StateObject private var gameController = GameControllerManager()
-    @StateObject private var ble = BLEManager()
+    @State private var touchController: TouchControllerManager
+    @State private var gameController: GameControllerManager
+    @State private var ble = BLEManager()
+
+    init() {
+        let touchController = TouchControllerManager()
+        _touchController = State(wrappedValue: touchController)
+        _gameController = State(wrappedValue: GameControllerManager(ignoring: touchController))
+    }
+
+    private var mergedPacket: ControlPacket {
+        var packet = gameController.packet
+        if gameController.controllerName == nil {
+            packet.lx = touchController.state.lx
+            packet.ly = touchController.state.ly
+        }
+        return packet
+    }
 
     var body: some View {
-        VStack(spacing: 16) {
-            statusBar
-            distanceBar
+        ZStack {
+            VStack(spacing: 16) {
+                statusBar
+                distanceBar
 
-            HStack(spacing: 24) {
-                SpeedometerView(speed: abs(gameController.packet.ly), label: "LEFT TRACK")
-                SpeedometerView(speed: abs(gameController.packet.ry), label: "RIGHT TRACK")
+                HStack(spacing: 24) {
+                    SpeedometerView(speed: abs(mergedPacket.ly), label: "l.joystick.tilt.left")
+                    SpeedometerView(speed: abs(mergedPacket.ry), label: "r.joystick.tilt.right")
+                }
+                .padding(.horizontal)
             }
-            .padding(.horizontal)
-        }
-        .padding()
-        .background(Color(.systemBackground))
-        .onChange(of: gameController.packet) { _, packet in
-            ble.send(packet)
+            .padding()
+            .background(Color(.systemBackground))
+            .onChange(of: gameController.packet) { _, _ in
+                ble.send(mergedPacket)
+            }
+            .onChange(of: touchController.state) { _, _ in
+                ble.send(mergedPacket)
+            }
+
+            TouchPadView(manager: touchController, isEnabled: gameController.controllerName == nil)
+                .ignoresSafeArea()
+                .allowsHitTesting(true)
         }
     }
 
