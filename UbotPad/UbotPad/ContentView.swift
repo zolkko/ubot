@@ -1,4 +1,5 @@
 import SwiftUI
+import TouchController
 
 
 struct ContentView: View {
@@ -42,9 +43,11 @@ struct ContentView: View {
                 ble.send(mergedPacket)
             }
 
-            TouchPadView(manager: touchController, isEnabled: gameController.controllerName == nil)
-                .ignoresSafeArea()
-                .allowsHitTesting(true)
+            if (TCTouchController.isSupported) {
+                TouchPadView(manager: touchController, isEnabled: gameController.controllerName == nil)
+                    .ignoresSafeArea()
+                    .allowsHitTesting(true)
+            }
         }
     }
 
@@ -52,7 +55,7 @@ struct ContentView: View {
         HStack {
             Label(
                 gameController.controllerName ?? "No controller",
-                systemImage: gameController.controllerName == nil ? "gamecontroller.slash" : "gamecontroller.fill"
+                systemImage: gameController.controllerName == nil ? "minus.square" : "gamecontroller.fill"
             )
             .foregroundStyle(gameController.controllerName == nil ? .secondary : .primary)
 

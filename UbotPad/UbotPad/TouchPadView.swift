@@ -126,7 +126,7 @@ class Renderer: NSObject, MTKViewDelegate {
         stickDescriptor.size = CGSize(width: 140, height: 140)
         stickDescriptor.stickSize = CGSize(width: 64, height: 64)
         stickDescriptor.hidesWhenNotPressed = false
-        stickDescriptor.label = TCControlLabel(name: "LeftStick", role: .directionPad)
+        stickDescriptor.label = TCControlLabel.leftThumbstick
 
         stickDescriptor.anchor = .bottomLeft
         stickDescriptor.anchorCoordinateSystem = .absolute
@@ -155,8 +155,6 @@ class Renderer: NSObject, MTKViewDelegate {
               let commandBuffer = commandQueue.makeCommandBuffer(),
               let encoder = commandBuffer.makeRenderCommandEncoder(descriptor: descriptor)
         else { return }
-
-        AppLogger.app.info("Draw \(Foundation.Date.now.timeIntervalSince1970)")
 
         touchController?.render(using: encoder)
 
