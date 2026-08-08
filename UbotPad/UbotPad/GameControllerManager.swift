@@ -2,6 +2,7 @@ import Foundation
 import GameController
 import TouchController
 import Combine
+import os
 
 @Observable
 @MainActor
@@ -117,6 +118,6 @@ final class GameControllerManager {
             dpad: dpad
         )
 
-        AppLogger.app.debug("Game Controller updated")
+        Logger.app.debug("Game Controller updated")
     }
 }
