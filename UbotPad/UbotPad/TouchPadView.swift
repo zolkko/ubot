@@ -28,16 +28,13 @@ final class TouchPadMTKView: MTKView {
     // as its life time is bound and makes no sense without the view.
     fileprivate var touchController: TCTouchController!
     
-    weak var manager: GameControllerManager?
-    
     init?(renderer: Renderer, manager: GameControllerManager) {
         guard let metalDevice = MTLCreateSystemDefaultDevice() else {
             return nil
         }
-        
+
         super.init(frame: .zero, device: metalDevice)
 
-        self.manager = manager
         self.delegate = renderer
 
         self.framebufferOnly = false
@@ -55,7 +52,7 @@ final class TouchPadMTKView: MTKView {
 
         self.touchController = TouchPadMTKView.makeTouchController(for: self)
 
-        self.manager?.touchController = self.touchController
+        manager.touchController = self.touchController
     }
     
     required init(coder: NSCoder) {
