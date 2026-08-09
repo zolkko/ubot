@@ -1,8 +1,34 @@
 import Foundation
 import GameController
 import TouchController
-import Combine
 import os
+
+
+struct TouchStickState: Equatable {
+    static let zero = TouchStickState(lx: 0, ly: 0)
+
+    var lx: Float = 0
+    var ly: Float = 0
+}
+
+/*
+ @Observable
+ @MainActor
+ final class TouchControllerManager {
+     private(set) var state: TouchStickState = .zero
+
+     private(set) var virtualController: GCController?
+
+     func attachedVirtualController(_ controller: GCController) {
+         virtualController = controller
+     }
+
+     func update(lx: Float, ly: Float) {
+         // TODO: clamp lx and ly to -1..1
+         state = TouchStickState(lx: lx, ly: ly)
+     }
+ }
+*/
 
 @Observable
 @MainActor
@@ -10,15 +36,12 @@ final class GameControllerManager {
     private(set) var packet = ControlPacket()
     private(set) var controllerName: String?
 
+    weak var touchController: TCTouchController?
+
     @ObservationIgnored
     private var observers: [NSObjectProtocol] = []
-    
-    @ObservationIgnored
-    private let touchController: TouchControllerManager?
 
-    init(ignoring touchController: TouchControllerManager? = nil) {
-        self.touchController = touchController
-
+    init() {
         observers.append(
             NotificationCenter.default.addObserver(
                 forName: .GCControllerDidConnect, object: nil, queue: .main
@@ -44,6 +67,10 @@ final class GameControllerManager {
         GCController.startWirelessControllerDiscovery(completionHandler: nil)
         if let controller = GCController.controllers().first(where: { [weak self] in self?.isPhysical($0) ?? true }) {
             attach(controller)
+        } else {
+            if (TCTouchController.isSupported) {
+                // TODO: attach touch controller
+            }
         }
     }
 
@@ -54,7 +81,8 @@ final class GameControllerManager {
     }
 
     private func isPhysical(_ controller: GCController) -> Bool {
-        controller !== touchController?.virtualController
+        // controller !== touchController?.virtualController
+        return false
     }
 
     private func attach(_ controller: GCController) {
@@ -73,6 +101,10 @@ final class GameControllerManager {
 
     private func detach(_ controller: GCController) {
         guard isPhysical(controller) else { return }
+        
+        if (TCTouchController.isSupported) {
+            // TODO: attach virtual controller
+        }
 
         controllerName = nil
         packet = ControlPacket()
@@ -117,7 +149,5 @@ final class GameControllerManager {
             buttons: mask,
             dpad: dpad
         )
-
-        Logger.app.debug("Game Controller updated")
     }
 }

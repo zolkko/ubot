@@ -1,24 +1,22 @@
 import SwiftUI
 import TouchController
+import os
 
 
 struct ContentView: View {
-    @State private var touchController: TouchControllerManager
     @State private var gameController: GameControllerManager
     @State private var ble = BLEManager()
 
     init() {
-        let touchController = TouchControllerManager()
-        _touchController = State(wrappedValue: touchController)
-        _gameController = State(wrappedValue: GameControllerManager(ignoring: touchController))
+        _gameController = State(wrappedValue: GameControllerManager())
     }
 
     private var mergedPacket: ControlPacket {
         var packet = gameController.packet
-        if gameController.controllerName == nil {
-            packet.lx = touchController.state.lx
-            packet.ly = touchController.state.ly
-        }
+//        if gameController.controllerName == nil {
+//            packet.lx = touchController.state.lx
+//            packet.ly = touchController.state.ly
+//        }
         return packet
     }
 
@@ -39,12 +37,9 @@ struct ContentView: View {
             .onChange(of: gameController.packet) { _, _ in
                 ble.send(mergedPacket)
             }
-            .onChange(of: touchController.state) { _, _ in
-                ble.send(mergedPacket)
-            }
 
             if (TCTouchController.isSupported) {
-                TouchPadView(manager: touchController, isEnabled: gameController.controllerName == nil)
+                TouchPadView(manager: gameController)
                     .ignoresSafeArea()
                     .allowsHitTesting(true)
             }

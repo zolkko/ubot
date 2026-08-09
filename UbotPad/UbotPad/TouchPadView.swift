@@ -5,131 +5,122 @@ import TouchController
 
 
 struct TouchPadView: UIViewRepresentable {
-    var manager: TouchControllerManager
-    var isEnabled: Bool
+    @State var manager: GameControllerManager
 
     func makeCoordinator() -> Renderer {
-        Renderer(manager: manager)
+        Renderer()
     }
 
     func makeUIView(context: Context) -> TouchPadMTKView {
-        let mtkView = TouchPadMTKView()
-        mtkView.renderer = context.coordinator
-        mtkView.delegate = context.coordinator
-        if let metalDevice = MTLCreateSystemDefaultDevice() {
-            mtkView.device = metalDevice
+        guard let view = TouchPadMTKView(renderer: context.coordinator, manager: self.manager) else {
+            fatalError("failed to create TouchPadMTKView")
         }
-        mtkView.framebufferOnly = false
-        mtkView.colorPixelFormat = .bgra8Unorm
-
-        // transparency settings
-        mtkView.isOpaque = false
-        mtkView.backgroundColor = .clear
-        mtkView.clearColor = MTLClearColor(red: 0, green: 0, blue: 0, alpha: 0.5)
-
-        // The underlying CAMetalLayer also needs to know it's not opaque
-        mtkView.layer.isOpaque = false
-
-        mtkView.isMultipleTouchEnabled = true
-
-        return mtkView
+        return view
     }
 
     func updateUIView(_ uiView: TouchPadMTKView, context: Context) {
-        context.coordinator.setEnabled(isEnabled)
     }
 }
 
 final class TouchPadMTKView: MTKView {
-    weak var renderer: Renderer?
+
+    // Metal View holds a reference to TouchController
+    // as its life time is bound and makes no sense without the view.
+    fileprivate var touchController: TCTouchController!
+    
+    weak var manager: GameControllerManager?
+    
+    init?(renderer: Renderer, manager: GameControllerManager) {
+        guard let metalDevice = MTLCreateSystemDefaultDevice() else {
+            return nil
+        }
+        
+        super.init(frame: .zero, device: metalDevice)
+
+        self.manager = manager
+        self.delegate = renderer
+
+        self.framebufferOnly = false
+        self.colorPixelFormat = .bgra8Unorm
+
+        // transparency settings
+        self.isOpaque = false
+        self.backgroundColor = .clear
+        self.clearColor = MTLClearColor(red: 0, green: 0, blue: 0, alpha: 0.5)
+
+        // The underlying CAMetalLayer also needs to know it's not opaque
+        self.layer.isOpaque = false
+
+        self.isMultipleTouchEnabled = true
+
+        self.touchController = TouchPadMTKView.makeTouchController(for: self)
+
+        self.manager?.touchController = self.touchController
+    }
+    
+    required init(coder: NSCoder) {
+        super.init(coder: coder)
+    }
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         for touch in touches {
-            _ = renderer?.touchController?.handleTouchBegan(at: touch.location(in: self), index: touch.hash)
+            _ = touchController.handleTouchBegan(at: touch.location(in: self), index: touch.hash)
         }
     }
 
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         for touch in touches {
-            _ = renderer?.touchController?.handleTouchMoved(at: touch.location(in: self), index: touch.hash)
+            _ = touchController.handleTouchMoved(at: touch.location(in: self), index: touch.hash)
         }
     }
 
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         for touch in touches {
-            _ = renderer?.touchController?.handleTouchEnded(at: touch.location(in: self), index: touch.hash)
+            _ = touchController.handleTouchEnded(at: touch.location(in: self), index: touch.hash)
         }
     }
 
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
         for touch in touches {
-            _ = renderer?.touchController?.handleTouchEnded(at: touch.location(in: self), index: touch.hash)
+            _ = touchController.handleTouchEnded(at: touch.location(in: self), index: touch.hash)
         }
     }
-}
-
-class Renderer: NSObject, MTKViewDelegate {
-    private let manager: TouchControllerManager
-    fileprivate var touchController: TCTouchController?
-
-    private var device: MTLDevice!
-    private var commandQueue: MTLCommandQueue!
-    private var isEnabled = true
-
-    init(manager: TouchControllerManager) {
-        self.manager = manager
-        if let device = MTLCreateSystemDefaultDevice() {
-            self.device = device
-        }
-        self.commandQueue = device.makeCommandQueue()
-        super.init()
-    }
-
-    func setEnabled(_ enabled: Bool) {
-        isEnabled = enabled
-        guard let touchController else { return }
-        if enabled {
-            touchController.connect()
-        } else {
-            touchController.disconnect()
-        }
-    }
-
-    private func setupTouchController(for view: MTKView) {
+    
+    private static func makeTouchController(for view: MTKView) -> TCTouchController {
         let descriptor = TCTouchControllerDescriptor(mtkView: view)
         let controller = TCTouchController(descriptor: descriptor)
 
         let stickDescriptor = makeLeftStick(for: controller)
         _ = controller.addThumbstick(descriptor: stickDescriptor)
 
-        Task { @MainActor [weak self] in
-            self?.manager.attachedVirtualController(controller.controller)
-        }
+//        Task { @MainActor [weak self] in
+//            self?.manager?.touchController = controller
+//        }
 
-        controller.controller.extendedGamepad?.valueChangedHandler = { [weak manager] gamepad, _ in
-            Task { @MainActor in
-                manager?.update(
-                    lx: gamepad.leftThumbstick.xAxis.value,
-                    ly: gamepad.leftThumbstick.yAxis.value
-                )
-            }
-        }
+// TODO: move into GameControllerManager ...
+//        controller.controller.extendedGamepad?.valueChangedHandler = { [weak manager] gamepad, _ in
+//            Task { @MainActor in
+//                manager?.update(
+//                    lx: gamepad.leftThumbstick.xAxis.value,
+//                    ly: gamepad.leftThumbstick.yAxis.value
+//                )
+//            }
+//        }
 
-        touchController = controller
-        if isEnabled {
-            controller.connect()
-        }
+//        controller.connect()
+//        touchController.disconnect()
+        return controller
     }
     
-    private func makeLeftStick(for controller: TCTouchController) -> TCThumbstickDescriptor {
+    private static func makeLeftStick(for controller: TCTouchController) -> TCThumbstickDescriptor {
         let stickDescriptor = TCThumbstickDescriptor()
         stickDescriptor.size = CGSize(width: 140, height: 140)
         stickDescriptor.stickSize = CGSize(width: 64, height: 64)
         stickDescriptor.hidesWhenNotPressed = false
         stickDescriptor.label = TCControlLabel.leftThumbstick
 
-        stickDescriptor.anchor = .bottomLeft
-        stickDescriptor.anchorCoordinateSystem = .absolute
+        stickDescriptor.anchor = .bottomLeft // .topLeft
+        stickDescriptor.anchorCoordinateSystem = .relative // .absolute
         stickDescriptor.offset = CGPoint(x: 24, y: -24)
         stickDescriptor.backgroundContents = TCControlContents.thumbstickStickBackgroundContents(
             size: stickDescriptor.size,
@@ -142,11 +133,21 @@ class Renderer: NSObject, MTKViewDelegate {
 
         return stickDescriptor
     }
+}
+
+class Renderer: NSObject, MTKViewDelegate {
+    private var device: MTLDevice!
+    private var commandQueue: MTLCommandQueue!
+
+    override init() {
+        if let device = MTLCreateSystemDefaultDevice() {
+            self.device = device
+        }
+        self.commandQueue = device.makeCommandQueue()
+        super.init()
+    }
 
     func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
-        if touchController == nil {
-            setupTouchController(for: view)
-        }
     }
 
     func draw(in view: MTKView) {
@@ -156,7 +157,7 @@ class Renderer: NSObject, MTKViewDelegate {
               let encoder = commandBuffer.makeRenderCommandEncoder(descriptor: descriptor)
         else { return }
 
-        touchController?.render(using: encoder)
+        (view as! TouchPadMTKView).touchController.render(using: encoder)
 
         encoder.endEncoding()
         commandBuffer.present(drawable)
@@ -167,6 +168,6 @@ class Renderer: NSObject, MTKViewDelegate {
 #Preview {
     ZStack {
         Color(.systemBackground).ignoresSafeArea()
-        TouchPadView(manager: TouchControllerManager(), isEnabled: true)
+        TouchPadView(manager: GameControllerManager())
     }
 }

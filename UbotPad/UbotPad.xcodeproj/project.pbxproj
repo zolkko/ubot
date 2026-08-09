@@ -10,7 +10,6 @@
 		114EB01E160343DE99C0482E /* SpeedometerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 981A62CEBD9F420AADF553B4 /* SpeedometerView.swift */; };
 		227E658FE62341A08492B719 /* BLEManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5090C8C9AC34B9A97FDEC89 /* BLEManager.swift */; };
 		36978A0C9401451DB7D96D0F /* ControlPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4566A734B74274A86046B4 /* ControlPacket.swift */; };
-		4D390F673026271600A4D20E /* TouchControllerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D390F663026271600A4D20E /* TouchControllerManager.swift */; };
 		4DB8731A302515B100ADE850 /* TouchPadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DB87319302515A900ADE850 /* TouchPadView.swift */; };
 		4DB8731C3025FA9100ADE850 /* AppLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DB8731B3025FA8C00ADE850 /* AppLogger.swift */; };
 		58CCB28165DA4E408A504E59 /* GameControllerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3866359EE2E54E78851A955D /* GameControllerManager.swift */; };
@@ -21,7 +20,6 @@
 
 /* Begin PBXFileReference section */
 		3866359EE2E54E78851A955D /* GameControllerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameControllerManager.swift; sourceTree = "<group>"; };
-		4D390F663026271600A4D20E /* TouchControllerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchControllerManager.swift; sourceTree = "<group>"; };
 		4DB87319302515A900ADE850 /* TouchPadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchPadView.swift; sourceTree = "<group>"; };
 		4DB8731B3025FA8C00ADE850 /* AppLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLogger.swift; sourceTree = "<group>"; };
 		55603C3102964F80BE9FC954 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -55,7 +53,6 @@
 				3866359EE2E54E78851A955D /* GameControllerManager.swift */,
 				D5090C8C9AC34B9A97FDEC89 /* BLEManager.swift */,
 				8F4566A734B74274A86046B4 /* ControlPacket.swift */,
-				4D390F663026271600A4D20E /* TouchControllerManager.swift */,
 				EF20978D2E1243CFBE03C63D /* Assets.xcassets */,
 			);
 			path = UbotPad;
@@ -150,7 +147,6 @@
 				E7DA17D557B34BDB81CF0D4A /* UbotPadApp.swift in Sources */,
 				E3CFB267B9734DFD9B127247 /* ContentView.swift in Sources */,
 				114EB01E160343DE99C0482E /* SpeedometerView.swift in Sources */,
-				4D390F673026271600A4D20E /* TouchControllerManager.swift in Sources */,
 				58CCB28165DA4E408A504E59 /* GameControllerManager.swift in Sources */,
 				227E658FE62341A08492B719 /* BLEManager.swift in Sources */,
 				36978A0C9401451DB7D96D0F /* ControlPacket.swift in Sources */,
@@ -170,6 +166,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = 79SB94AXCH;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Ubot2 uses Bluetooth to connect to your track robot.";
@@ -200,6 +197,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = 79SB94AXCH;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Ubot2 uses Bluetooth to connect to your track robot.";
