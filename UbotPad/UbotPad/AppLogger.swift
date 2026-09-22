@@ -3,7 +3,7 @@ import os
 
 
 extension Logger {
-    // Subsystem identifies your app, Category identifies the module
-    private static var subsystem = Bundle.main.bundleIdentifier ?? "place.blumen.UbotPad"
+    private static let subsystem = Bundle.main.bundleIdentifier ?? "place.blumen.UbotPad"
+    
     static let app = Logger(subsystem: subsystem, category: "App")
 }

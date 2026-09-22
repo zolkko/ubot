@@ -10,22 +10,29 @@
 		114EB01E160343DE99C0482E /* SpeedometerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 981A62CEBD9F420AADF553B4 /* SpeedometerView.swift */; };
 		227E658FE62341A08492B719 /* BLEManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5090C8C9AC34B9A97FDEC89 /* BLEManager.swift */; };
 		36978A0C9401451DB7D96D0F /* ControlPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F4566A734B74274A86046B4 /* ControlPacket.swift */; };
+		4D9CF60030629A670019682A /* SpeedometerWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D9CF5FF30629A600019682A /* SpeedometerWrapper.swift */; };
 		4DB8731A302515B100ADE850 /* TouchPadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DB87319302515A900ADE850 /* TouchPadView.swift */; };
 		4DB8731C3025FA9100ADE850 /* AppLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DB8731B3025FA8C00ADE850 /* AppLogger.swift */; };
 		58CCB28165DA4E408A504E59 /* GameControllerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3866359EE2E54E78851A955D /* GameControllerManager.swift */; };
+		C965A62343D4442B8DE928A8 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = ACE5D02235CF4E67849C3596 /* Shaders.metal */; };
 		D009A5D0607C4A0A9AC82F07 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EF20978D2E1243CFBE03C63D /* Assets.xcassets */; };
 		E3CFB267B9734DFD9B127247 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55603C3102964F80BE9FC954 /* ContentView.swift */; };
 		E7DA17D557B34BDB81CF0D4A /* UbotPadApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D575CCD39E5F4FCD98AA7062 /* UbotPadApp.swift */; };
+		E9CA409CF2A4419E803186C6 /* ubotdw.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3566E9A23A5749AD9C70DDD9 /* ubotdw.xcframework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3566E9A23A5749AD9C70DDD9 /* ubotdw.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = ubotdw.xcframework; path = ../ubotdw/build/ubotdw.xcframework; sourceTree = "<group>"; };
 		3866359EE2E54E78851A955D /* GameControllerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameControllerManager.swift; sourceTree = "<group>"; };
+		4D9CF5FF30629A600019682A /* SpeedometerWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeedometerWrapper.swift; sourceTree = "<group>"; };
 		4DB87319302515A900ADE850 /* TouchPadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchPadView.swift; sourceTree = "<group>"; };
 		4DB8731B3025FA8C00ADE850 /* AppLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLogger.swift; sourceTree = "<group>"; };
 		55603C3102964F80BE9FC954 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		5AD47E549DB946858CE74439 /* UbotPad-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UbotPad-Bridging-Header.h"; sourceTree = "<group>"; };
 		805D1BF785024DE280C16750 /* UbotPad.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UbotPad.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8F4566A734B74274A86046B4 /* ControlPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlPacket.swift; sourceTree = "<group>"; };
 		981A62CEBD9F420AADF553B4 /* SpeedometerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeedometerView.swift; sourceTree = "<group>"; };
+		ACE5D02235CF4E67849C3596 /* Shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
 		D5090C8C9AC34B9A97FDEC89 /* BLEManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BLEManager.swift; sourceTree = "<group>"; };
 		D575CCD39E5F4FCD98AA7062 /* UbotPadApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UbotPadApp.swift; sourceTree = "<group>"; };
 		EF20978D2E1243CFBE03C63D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -36,6 +43,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E9CA409CF2A4419E803186C6 /* ubotdw.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -45,8 +53,11 @@
 		17E6A236F7E9423F9B7F4288 /* UbotPad */ = {
 			isa = PBXGroup;
 			children = (
+				4D9CF5FF30629A600019682A /* SpeedometerWrapper.swift */,
+				5AD47E549DB946858CE74439 /* UbotPad-Bridging-Header.h */,
 				4DB8731B3025FA8C00ADE850 /* AppLogger.swift */,
 				4DB87319302515A900ADE850 /* TouchPadView.swift */,
+				ACE5D02235CF4E67849C3596 /* Shaders.metal */,
 				D575CCD39E5F4FCD98AA7062 /* UbotPadApp.swift */,
 				55603C3102964F80BE9FC954 /* ContentView.swift */,
 				981A62CEBD9F420AADF553B4 /* SpeedometerView.swift */,
@@ -63,6 +74,7 @@
 			children = (
 				17E6A236F7E9423F9B7F4288 /* UbotPad */,
 				67F2070EBAF6488BAF6FBA83 /* Products */,
+				3566E9A23A5749AD9C70DDD9 /* ubotdw.xcframework */,
 			);
 			sourceTree = "<group>";
 		};
@@ -81,6 +93,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = A3F49D308FEB45B38B8AEE2C /* Build configuration list for PBXNativeTarget "UbotPad" */;
 			buildPhases = (
+				A67BF8842B0F4D7EB3D5CA1F /* Build ubotdw xcframework */,
 				6D6DF14B39A844C5838235C5 /* Sources */,
 				F5938D0DD0AA48268E03F88B /* Frameworks */,
 				25A169F957DD4BD9B9703F2B /* Resources */,
@@ -138,12 +151,34 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		A67BF8842B0F4D7EB3D5CA1F /* Build ubotdw xcframework */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Build ubotdw xcframework";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "make -C \"${SRCROOT}/../ubotdw\" xcframework\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		6D6DF14B39A844C5838235C5 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				4DB8731A302515B100ADE850 /* TouchPadView.swift in Sources */,
+				4D9CF60030629A670019682A /* SpeedometerWrapper.swift in Sources */,
 				E7DA17D557B34BDB81CF0D4A /* UbotPadApp.swift in Sources */,
 				E3CFB267B9734DFD9B127247 /* ContentView.swift in Sources */,
 				114EB01E160343DE99C0482E /* SpeedometerView.swift in Sources */,
@@ -151,6 +186,7 @@
 				227E658FE62341A08492B719 /* BLEManager.swift in Sources */,
 				36978A0C9401451DB7D96D0F /* ControlPacket.swift in Sources */,
 				4DB8731C3025FA9100ADE850 /* AppLogger.swift in Sources */,
+				C965A62343D4442B8DE928A8 /* Shaders.metal in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -168,6 +204,7 @@
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = 79SB94AXCH;
 				ENABLE_PREVIEWS = YES;
+				"EXCLUDED_ARCHS[sdk=iphone*]" = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Ubot2 uses Bluetooth to connect to your track robot.";
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -183,7 +220,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.ubot.UbotPad;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
+				SWIFT_OBJC_BRIDGING_HEADER = "UbotPad/UbotPad-Bridging-Header.h";
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
@@ -199,6 +237,7 @@
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_TEAM = 79SB94AXCH;
 				ENABLE_PREVIEWS = YES;
+				"EXCLUDED_ARCHS[sdk=iphone*]" = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSBluetoothAlwaysUsageDescription = "Ubot2 uses Bluetooth to connect to your track robot.";
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -214,7 +253,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.ubot.UbotPad;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
+				SWIFT_OBJC_BRIDGING_HEADER = "UbotPad/UbotPad-Bridging-Header.h";
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
@@ -222,7 +262,7 @@
 		57C0E1C7E740403EB031C9CA /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
+				ALWAYS_SEARCH_USER_PATHS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -257,13 +297,13 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -271,7 +311,7 @@
 		AB8B6486C22141AB84FCEDE1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
+				ALWAYS_SEARCH_USER_PATHS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -313,7 +353,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -321,7 +361,7 @@
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 			};
 			name = Debug;
 		};

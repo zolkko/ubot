@@ -4,110 +4,159 @@ import TouchController
 import os
 
 
-struct TouchStickState: Equatable {
-    static let zero = TouchStickState(lx: 0, ly: 0)
-
-    var lx: Float = 0
-    var ly: Float = 0
-}
-
-/*
- @Observable
- @MainActor
- final class TouchControllerManager {
-     private(set) var state: TouchStickState = .zero
-
-     private(set) var virtualController: GCController?
-
-     func attachedVirtualController(_ controller: GCController) {
-         virtualController = controller
-     }
-
-     func update(lx: Float, ly: Float) {
-         // TODO: clamp lx and ly to -1..1
-         state = TouchStickState(lx: lx, ly: ly)
-     }
- }
-*/
-
 @Observable
 @MainActor
 final class GameControllerManager {
     private(set) var packet = ControlPacket()
     private(set) var controllerName: String?
-
-    weak var touchController: TCTouchController?
+    
+    @ObservationIgnored
+    weak var touchController: TCTouchController? {
+        willSet {
+            if self.physicalController == nil {
+                newValue?.connect()
+            }
+        }
+    }
 
     @ObservationIgnored
-    private var observers: [NSObjectProtocol] = []
+    private weak var activeController: GCController?
+
+    /// The most recently connected physical (non-touch) controller, kept even while the
+    /// TouchController is active so we know what to fall back to / prefer.
+    @ObservationIgnored
+    private weak var physicalController: GCController?
+
+    /// The TouchController's own virtual GCController, once it has connected.
+    @ObservationIgnored
+    private weak var touchVirtualController: GCController?
+
+    /// Observation ends automatically when these tokens are released.
+    @ObservationIgnored
+    private var observers: [NotificationCenter.ObservationToken] = []
 
     init() {
         observers.append(
             NotificationCenter.default.addObserver(
-                forName: .GCControllerDidConnect, object: nil, queue: .main
-            ) { [weak self] note in
-                guard let controller = note.object as? GCController else { return }
-                Task { @MainActor [weak self] in
-                    self?.attach(controller)
-                }
+                of: GCController.self, for: .didConnect
+            ) { [weak self] message in
+                self?.controllerDidConnect(message.controller)
             }
         )
 
         observers.append(
             NotificationCenter.default.addObserver(
-                forName: .GCControllerDidDisconnect, object: nil, queue: .main
-            ) { [weak self] note in
-                guard let controller = note.object as? GCController else { return }
-                Task { @MainActor [weak self] in
-                    self?.detach(controller)
-                }
+                of: GCController.self, for: .didDisconnect
+            ) { [weak self] message in
+                self?.controllerDidDisconnect(message.controller)
             }
         )
 
         GCController.startWirelessControllerDiscovery(completionHandler: nil)
-        if let controller = GCController.controllers().first(where: { [weak self] in self?.isPhysical($0) ?? true }) {
-            attach(controller)
-        } else {
-            if (TCTouchController.isSupported) {
-                // TODO: attach touch controller
+
+        if let controller = preferredPhysicalController() {
+            controllerDidConnect(controller)
+        }
+    }
+
+    /// Called when the user touches the on-screen pad: the TouchController regains
+    /// control (and hides the physical controller's grip on `packet`) immediately,
+    /// without waiting for a touch to actually move a stick.
+    func userDidTouchScreen() {
+        touchController?.connect()
+        if let touchVirtualController {
+            switchActive(to: touchVirtualController)
+        }
+    }
+
+    private func controllerDidConnect(_ controller: GCController) {
+        if controller.isTouchController() {
+            attachHandler(controller)
+            touchVirtualController = controller
+            switchActive(to: controller)
+            return
+        }
+
+        guard physicalController == nil else {
+            // A physical controller is already connected; ignore any others that connect
+            // until it disconnects.
+            return
+        }
+
+        // A physical controller always takes priority over the on-screen TouchController.
+        // `GCController.current` is the system's own notion of the most recently used
+        // controller, so prefer it over the one that merely happened to fire this
+        // particular connect notification.
+        let preferred = preferredPhysicalController() ?? controller
+        physicalController = preferred
+        attachHandler(preferred)
+        switchActive(to: preferred)
+    }
+
+    private func controllerDidDisconnect(_ controller: GCController) {
+        let wasActive = controller === activeController
+
+        if controller.isTouchController() {
+            if touchVirtualController === controller { touchVirtualController = nil }
+        } else if controller === physicalController {
+            physicalController = nil
+
+            // A previously-ignored physical controller, if any, now becomes the preferred one.
+            if let fallback = preferredPhysicalController(excluding: controller) {
+                physicalController = fallback
+                attachHandler(fallback)
             }
         }
-    }
 
-    deinit {
-        Task { @MainActor [weak self] in
-            self?.observers.forEach(NotificationCenter.default.removeObserver)
+        guard wasActive else { return }
+
+        if let physicalController {
+            switchActive(to: physicalController)
+        } else {
+            activeController = nil
+            controllerName = nil
+            packet = ControlPacket()
+            touchController?.connect()
         }
     }
 
-    private func isPhysical(_ controller: GCController) -> Bool {
-        // controller !== touchController?.virtualController
-        return false
+    /// The physical controller to prefer among currently connected ones: `GCController.current`
+    /// (the system's own notion of the most recently used controller) when it's set and not
+    /// the on-screen TouchController, otherwise the most recently connected physical controller.
+    private func preferredPhysicalController(excluding excluded: GCController? = nil) -> GCController? {
+        if let current = GCController.current, !current.isTouchController(), current !== excluded {
+            return current
+        }
+        return GCController.controllers().last(where: { !$0.isTouchController() && $0 !== excluded })
     }
 
-    private func attach(_ controller: GCController) {
-        guard isPhysical(controller) else { return }
-
-        controllerName = controller.vendorName ?? "Controller"
+    /// Installs the handler that both feeds `packet` and re-promotes this controller to
+    /// active whenever it reports fresh input — e.g. the user pressing a button on a
+    /// physical controller while the TouchController is currently active.
+    private func attachHandler(_ controller: GCController) {
         guard let gamepad = controller.extendedGamepad else { return }
 
         gamepad.valueChangedHandler = { [weak self] gamepad, _ in
             Task { @MainActor in
+                self?.switchActive(to: controller)
                 self?.update(from: gamepad)
             }
         }
-        update(from: gamepad)
     }
 
-    private func detach(_ controller: GCController) {
-        guard isPhysical(controller) else { return }
-        
-        if (TCTouchController.isSupported) {
-            // TODO: attach virtual controller
-        }
+    /// Makes `controller` the one driving `packet`, hiding the on-screen TouchController
+    /// UI whenever a physical controller takes over.
+    private func switchActive(to controller: GCController) {
+        guard activeController !== controller else { return }
 
-        controllerName = nil
-        packet = ControlPacket()
+        activeController = controller
+        controllerName = controller.vendorName ?? "N/A"
+        if !controller.isTouchController() {
+            touchController?.disconnect()
+        }
+        if let gamepad = controller.extendedGamepad {
+            update(from: gamepad)
+        }
     }
 
     private func update(from gamepad: GCExtendedGamepad) {
@@ -149,5 +198,14 @@ final class GameControllerManager {
             buttons: mask,
             dpad: dpad
         )
+    }
+}
+
+
+extension GCController {
+    static let TOUCH_CONTROLLER_NAME: String = "Touch Controller"
+
+    func isTouchController() -> Bool {
+        return self.productCategory == GCController.TOUCH_CONTROLLER_NAME && self.vendorName == GCController.TOUCH_CONTROLLER_NAME
     }
 }

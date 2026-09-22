@@ -27,11 +27,17 @@ final class TouchPadMTKView: MTKView {
     // Metal View holds a reference to TouchController
     // as its life time is bound and makes no sense without the view.
     fileprivate var touchController: TCTouchController!
+
+    private weak var manager: GameControllerManager?
     
+    fileprivate var speedometer: SpeedometerWrapper?
+
     init?(renderer: Renderer, manager: GameControllerManager) {
         guard let metalDevice = MTLCreateSystemDefaultDevice() else {
             return nil
         }
+
+        self.manager = manager
 
         super.init(frame: .zero, device: metalDevice)
 
@@ -53,13 +59,17 @@ final class TouchPadMTKView: MTKView {
         self.touchController = TouchPadMTKView.makeTouchController(for: self)
 
         manager.touchController = self.touchController
+        
+        self.speedometer = SpeedometerWrapper(view: self)
     }
     
     required init(coder: NSCoder) {
         super.init(coder: coder)
+        self.speedometer = SpeedometerWrapper(view: self)
     }
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        manager?.userDidTouchScreen()
         for touch in touches {
             _ = touchController.handleTouchBegan(at: touch.location(in: self), index: touch.hash)
         }
@@ -90,22 +100,6 @@ final class TouchPadMTKView: MTKView {
         let stickDescriptor = makeLeftStick(for: controller)
         _ = controller.addThumbstick(descriptor: stickDescriptor)
 
-//        Task { @MainActor [weak self] in
-//            self?.manager?.touchController = controller
-//        }
-
-// TODO: move into GameControllerManager ...
-//        controller.controller.extendedGamepad?.valueChangedHandler = { [weak manager] gamepad, _ in
-//            Task { @MainActor in
-//                manager?.update(
-//                    lx: gamepad.leftThumbstick.xAxis.value,
-//                    ly: gamepad.leftThumbstick.yAxis.value
-//                )
-//            }
-//        }
-
-//        controller.connect()
-//        touchController.disconnect()
         return controller
     }
     
@@ -132,9 +126,14 @@ final class TouchPadMTKView: MTKView {
     }
 }
 
+struct CircleUniforms {
+    var resolution: SIMD2<Float>
+}
+
 class Renderer: NSObject, MTKViewDelegate {
     private var device: MTLDevice!
     private var commandQueue: MTLCommandQueue!
+    private var circlePipelineState: MTLRenderPipelineState!
 
     override init() {
         if let device = MTLCreateSystemDefaultDevice() {
@@ -142,23 +141,59 @@ class Renderer: NSObject, MTKViewDelegate {
         }
         self.commandQueue = device.makeCommandQueue()
         super.init()
+
+        self.circlePipelineState = Renderer.makeCirclePipelineState(device: device)
+    }
+
+    private static func makeCirclePipelineState(device: MTLDevice) -> MTLRenderPipelineState? {
+        guard let library = device.makeDefaultLibrary(),
+              let vertexFunction = library.makeFunction(name: "circle_vertex"),
+              let fragmentFunction = library.makeFunction(name: "circle_fragment")
+        else {
+            return nil
+        }
+
+        let descriptor = MTLRenderPipelineDescriptor()
+        descriptor.vertexFunction = vertexFunction
+        descriptor.fragmentFunction = fragmentFunction
+        descriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
+        descriptor.colorAttachments[0].isBlendingEnabled = true
+        descriptor.colorAttachments[0].rgbBlendOperation = .add
+        descriptor.colorAttachments[0].alphaBlendOperation = .add
+        descriptor.colorAttachments[0].sourceRGBBlendFactor = .sourceAlpha
+        descriptor.colorAttachments[0].sourceAlphaBlendFactor = .sourceAlpha
+        descriptor.colorAttachments[0].destinationRGBBlendFactor = .oneMinusSourceAlpha
+        descriptor.colorAttachments[0].destinationAlphaBlendFactor = .oneMinusSourceAlpha
+
+        return try? device.makeRenderPipelineState(descriptor: descriptor)
     }
 
     func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
     }
 
     func draw(in view: MTKView) {
-        guard let drawable = view.currentDrawable,
-              let descriptor = view.currentRenderPassDescriptor,
-              let commandBuffer = commandQueue.makeCommandBuffer(),
-              let encoder = commandBuffer.makeRenderCommandEncoder(descriptor: descriptor)
-        else { return }
+//        guard let drawable = view.currentDrawable,
+//              let descriptor = view.currentRenderPassDescriptor,
+//              let commandBuffer = commandQueue.makeCommandBuffer(),
+//              let encoder = commandBuffer.makeRenderCommandEncoder(descriptor: descriptor)
+//        else { return }
+
+        /*
+        if let circlePipelineState {
+            var uniforms = CircleUniforms(resolution: SIMD2<Float>(Float(view.drawableSize.width), Float(view.drawableSize.height)))
+            encoder.setRenderPipelineState(circlePipelineState)
+            encoder.setFragmentBytes(&uniforms, length: MemoryLayout<CircleUniforms>.stride, index: 0)
+            encoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 3)
+        }
 
         (view as! TouchPadMTKView).touchController.render(using: encoder)
+         */
 
-        encoder.endEncoding()
-        commandBuffer.present(drawable)
-        commandBuffer.commit()
+//        encoder.endEncoding()
+//        commandBuffer.present(drawable)
+//        commandBuffer.commit()
+
+        (view as! TouchPadMTKView).speedometer?.draw(speed: 50)
     }
 }
 

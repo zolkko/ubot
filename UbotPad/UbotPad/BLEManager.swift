@@ -12,14 +12,12 @@ enum RobotConnectionState: Equatable {
 
 // TODO: need to integrate with ActivityKit ...
 
-/// BLE central that scans for the "Ubot" peripheral (see `ubot-next/src/ble.rs`) and writes
-/// `ControlPacket`s to its control characteristic. UUIDs here must match that file exactly.
 @Observable
 @MainActor
-final class BLEManager: NSObject /*, ObservableObject */ {
-    nonisolated static let serviceUUID = CBUUID(string: "6F0F6A4E-5A3B-4B8E-9B0A-1F2E3D4C5B6A")
-    nonisolated static let controlCharUUID = CBUUID(string: "6F0F6A4E-5A3B-4B8E-9B0A-1F2E3D4C5B6B")
-    nonisolated static let distanceCharUUID = CBUUID(string: "6F0F6A4E-5A3B-4B8E-9B0A-1F2E3D4C5B6C")
+final class BLEManager: NSObject {
+    nonisolated(unsafe) static let serviceUUID = CBUUID(string: "6F0F6A4E-5A3B-4B8E-9B0A-1F2E3D4C5B6A")
+    nonisolated(unsafe) static let controlCharUUID = CBUUID(string: "6F0F6A4E-5A3B-4B8E-9B0A-1F2E3D4C5B6B")
+    nonisolated(unsafe) static let distanceCharUUID = CBUUID(string: "6F0F6A4E-5A3B-4B8E-9B0A-1F2E3D4C5B6C")
 
     /// Minimum spacing between writes so a fast-changing controller doesn't flood the link.
     private static let minSendInterval: TimeInterval = 1.0 / 30.0
@@ -57,39 +55,36 @@ final class BLEManager: NSObject /*, ObservableObject */ {
     }
 }
 
-extension BLEManager: CBCentralManagerDelegate {
-    nonisolated func centralManagerDidUpdateState(_ central: CBCentralManager) {
-        Task { @MainActor in
-            switch central.state {
-            case .poweredOn:
-                startScanning()
-            case .poweredOff, .unauthorized, .unsupported:
-                state = .poweredOff
-            default:
-                break
-            }
+// `@preconcurrency` lets these delegate methods stay on the main actor: the central is
+// created with `queue: nil`, so CoreBluetooth delivers every callback on the main queue,
+// and the non-Sendable delegate parameters never cross an isolation boundary.
+extension BLEManager: @preconcurrency CBCentralManagerDelegate {
+    func centralManagerDidUpdateState(_ central: CBCentralManager) {
+        switch central.state {
+        case .poweredOn:
+            startScanning()
+        case .poweredOff, .unauthorized, .unsupported:
+            state = .poweredOff
+        default:
+            break
         }
     }
 
-    nonisolated func centralManager(
+    func centralManager(
         _ central: CBCentralManager,
         didDiscover peripheral: CBPeripheral,
         advertisementData: [String: Any],
         rssi RSSI: NSNumber
     ) {
-        Task { @MainActor in
-            central.stopScan()
-            robotPeripheral = peripheral
-            peripheral.delegate = self
-            state = .connecting
-            central.connect(peripheral)
-        }
+        central.stopScan()
+        robotPeripheral = peripheral
+        peripheral.delegate = self
+        state = .connecting
+        central.connect(peripheral)
     }
 
-    nonisolated func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
-        Task { @MainActor in
-            peripheral.discoverServices([Self.serviceUUID])
-        }
+    func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
+        peripheral.discoverServices([Self.serviceUUID])
     }
 
     nonisolated func centralManager(
