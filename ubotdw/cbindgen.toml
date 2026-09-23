@@ -16,3 +16,4 @@ cpp_compat = true
 
 [ptr]
 non_null_attribute = "_Nonnull"
+nullable_attribute = "_Nullable"

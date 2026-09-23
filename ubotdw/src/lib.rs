@@ -2,26 +2,34 @@ use futures::executor::{self};
 use objc2::{MainThreadMarker, Message};
 use objc2_ui_kit::UIView;
 use raw_window_handle::{RawDisplayHandle, RawWindowHandle, UiKitDisplayHandle, UiKitWindowHandle};
-use std::error::Error as StdError;
 use std::ptr::NonNull;
-use wgpu::CurrentSurfaceTexture;
 use thiserror::Error;
+use wgpu::CurrentSurfaceTexture;
 
-
-
-const SPEEDOMETER_SHADER: &'static str = include_str!("shaders/speedometer.wgsl");
+const SPEEDOMETER_SHADER: &str = include_str!("shaders/speedometer.wgsl");
 
 pub type Speed = u64;
 
+#[repr(u32)]
 #[derive(Error, Debug)]
-enum SpeedometerError {
-    Std(&'static dyn StdError),
+pub enum SpeedometerError {
+    NonMainThread,
+    CreateSurfaceError,
+    RequestAdapterError,
+    RequestDeviceError,
+    CurrentSurfaceTextureError,
 }
 
 impl std::fmt::Display for SpeedometerError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            SpeedometerError::Std(e) => write!(f, "{}", e),
+            Self::NonMainThread => write!(f, "called from non-main thread"),
+            Self::CreateSurfaceError => write!(f, "failed to create WGPU surface"),
+            Self::RequestAdapterError => write!(f, "failed to request WGPU adapter"),
+            Self::RequestDeviceError => write!(f, "failed to request WGPU device"),
+            Self::CurrentSurfaceTextureError => {
+                write!(f, "failed to get current WGPU surface texture")
+            }
         }
     }
 }
@@ -36,14 +44,18 @@ struct Speedometer<'a> {
 }
 
 impl<'a> Speedometer<'a> {
-    fn new(ui_view: NonNull<UIView>) -> Result<Self, Box<dyn StdError>> {
+    fn new(ui_view: NonNull<UIView>) -> Result<Self, SpeedometerError> {
         let mut pool = executor::LocalPool::new();
 
         let view = unsafe { ui_view.as_ref() };
         let view = view.retain();
 
-        let window_handle = RawWindowHandle::UiKit(UiKitWindowHandle::new(ui_view.cast()));
+        // let _size = view.frame().size();
+        // let _width = _size.width() as u32;
+        // let _height = _size.height() as u32;
+
         let display_handle = RawDisplayHandle::UiKit(UiKitDisplayHandle::new());
+        let window_handle = RawWindowHandle::UiKit(UiKitWindowHandle::new(ui_view.cast()));
 
         let instance = wgpu::Instance::new(wgpu::InstanceDescriptor {
             backends: wgpu::Backends::METAL,
@@ -54,16 +66,16 @@ impl<'a> Speedometer<'a> {
         });
 
         let surface = unsafe {
-            instance
-                .create_surface_unsafe(wgpu::SurfaceTargetUnsafe::RawHandle {
-                    raw_display_handle: Some(display_handle),
-                    raw_window_handle: window_handle,
-                })
-                .expect("failed to create surface")
-        };
+            instance.create_surface_unsafe(wgpu::SurfaceTargetUnsafe::RawHandle {
+                raw_display_handle: Some(display_handle),
+                raw_window_handle: window_handle,
+            })
+        }
+        .map_err(|_| SpeedometerError::CreateSurfaceError)?;
 
-        let adapter =
-            pool.run_until(instance.request_adapter(&wgpu::RequestAdapterOptions::default()))?;
+        let adapter = pool
+            .run_until(instance.request_adapter(&wgpu::RequestAdapterOptions::default()))
+            .map_err(|_| SpeedometerError::RequestAdapterError)?;
 
         let descr = wgpu::DeviceDescriptor {
             label: None,
@@ -73,7 +85,9 @@ impl<'a> Speedometer<'a> {
             trace: wgpu::Trace::Off,
             experimental_features: wgpu::ExperimentalFeatures::disabled(),
         };
-        let (device, queue) = pool.run_until(adapter.request_device(&descr))?;
+        let (device, queue) = pool
+            .run_until(adapter.request_device(&descr))
+            .map_err(|_| SpeedometerError::RequestDeviceError)?;
 
         let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("Speedometer Shader"),
@@ -91,8 +105,8 @@ impl<'a> Speedometer<'a> {
                 color_space: wgpu::SurfaceColorSpace::Auto,
                 width: 1,
                 height: 1,
-                present_mode: caps.present_modes[0],
-                alpha_mode: caps.alpha_modes[0],
+                present_mode: wgpu::PresentMode::Mailbox,
+                alpha_mode: wgpu::CompositeAlphaMode::Opaque,
                 view_formats: vec![],
                 desired_maximum_frame_latency: 2,
             },
@@ -173,12 +187,11 @@ impl<'a> Speedometer<'a> {
     }
 
     /// Draws the speedometer gauge shader to the surface.
-    fn draw(&mut self, value: Speed) -> Result<(), Box<dyn StdError>> {
+    fn draw(&mut self, value: Speed) -> Result<(), SpeedometerError> {
         let frame = self.surface.get_current_texture();
-        let surface_texture = if let CurrentSurfaceTexture::Success(t) = frame {
-            t
-        } else {
-            panic!("...")
+        // TODO: handle all other cases.
+        let CurrentSurfaceTexture::Success(surface_texture) = frame else {
+            return Err(SpeedometerError::CurrentSurfaceTextureError);
         };
         let view = surface_texture
             .texture
@@ -187,6 +200,7 @@ impl<'a> Speedometer<'a> {
         let normalized_value = (value as f32 / 100.0).clamp(0.0, 1.0);
         let aspect =
             surface_texture.texture.width() as f32 / surface_texture.texture.height() as f32;
+
         let uniforms: [f32; 4] = [normalized_value, aspect, 0.0, 0.0];
 
         self.queue
@@ -228,32 +242,48 @@ impl<'a> Speedometer<'a> {
     }
 }
 
-pub struct SpeedometerStatic {
-    speedometer: Speedometer<'static>,
-}
+pub mod capi {
 
-/// xcbindgen:postfix=NS_RETURNS_RETAINED
-#[unsafe(no_mangle)]
-pub extern "C" fn speedometer_new(view: NonNull<UIView>) -> Option<NonNull<SpeedometerStatic>> {
-    let _mtm = MainThreadMarker::new().expect("must be called on the main thread");
+    use super::*;
 
-    let speedometer = Speedometer::new(view).expect("failed to create speedometer");
+    #[repr(C)]
+    pub enum SpeedometerResult {
+        Success,
+        Error(SpeedometerError),
+    }
 
-    let r: *mut SpeedometerStatic = Box::into_raw(Box::new(SpeedometerStatic { speedometer }));
-    NonNull::new(r)
-}
+    pub struct SpeedometerStatic {
+        speedometer: Speedometer<'static>,
+    }
 
-#[unsafe(no_mangle)]
-pub extern "C" fn speedometer_free(speedometer: NonNull<SpeedometerStatic>) {
-    let ptr = speedometer.as_ptr();
-    let boxed = unsafe { Box::from_raw(ptr) };
-    drop(boxed);
-}
+    /// TODO: Consider returning real ObjC object with cbindgen:postfix=NS_RETURNS_RETAINED
+    #[unsafe(no_mangle)]
+    pub extern "C" fn speedometer_new(view: NonNull<UIView>) -> Option<NonNull<SpeedometerStatic>> {
+        let _mtm = MainThreadMarker::new().expect("must be called on the main thread");
 
-#[unsafe(no_mangle)]
-pub extern "C" fn speedometer_draw(mut speedometer: NonNull<SpeedometerStatic>, value: Speed) {
-    let spd = unsafe { speedometer.as_mut() };
-    spd.speedometer
-        .draw(value)
-        .expect("failed to draw the speedometer");
+        let speedometer = Speedometer::new(view).expect("failed to create speedometer");
+
+        let r: *mut SpeedometerStatic = Box::into_raw(Box::new(SpeedometerStatic { speedometer }));
+        NonNull::new(r)
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn speedometer_free(speedometer: NonNull<SpeedometerStatic>) {
+        let ptr = speedometer.as_ptr();
+        let boxed = unsafe { Box::from_raw(ptr) };
+        drop(boxed);
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn speedometer_draw(
+        mut speedometer: NonNull<SpeedometerStatic>,
+        value: Speed,
+    ) -> SpeedometerResult {
+        let spd = unsafe { speedometer.as_mut() };
+        if let Err(e) = spd.speedometer.draw(value) {
+            return SpeedometerResult::Error(e);
+        }
+
+        SpeedometerResult::Success
+    }
 }

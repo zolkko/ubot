@@ -3,6 +3,10 @@ export PATH := $(HOME)/.cargo/bin:$(PATH)
 XCFRAMEWORK_NAME := ubotdw
 XCFRAMEWORK := build/$(XCFRAMEWORK_NAME).xcframework
 
+
+SRCS := $(shell find src -name '*.rs')
+
+
 define MODULEMAP
 module $(XCFRAMEWORK_NAME) {
   header "$(XCFRAMEWORK_NAME).h"
@@ -24,6 +28,10 @@ export MODULEMAP
 define APINOTES
 Name: $(XCFRAMEWORK_NAME)
 Tags:
+- Name: SpeedometerResult
+  EnumExtensibility: closed
+- Name: SpeedometerError
+  EnumExtensibility: closed
 endef
 export APINOTES
 
@@ -33,7 +41,7 @@ export APINOTES
 xcframework: $(XCFRAMEWORK)
 
 
-$(XCFRAMEWORK): ./src/lib.rs ./Cargo.toml ./cbindgen.toml ./rust-toolchain.toml
+$(XCFRAMEWORK): $(SRCS) ./Cargo.toml ./cbindgen.toml ./rust-toolchain.toml
 	cargo build --release --target aarch64-apple-ios
 	cargo build --release --target aarch64-apple-ios-sim
 	rm -rf $(XCFRAMEWORK)
@@ -58,7 +66,13 @@ iface: $(XCFRAMEWORK)
 .PHONY: check
 
 check:
+	@cargo clippy
 	@cargo check
+
+
+.PHONY: fmt
+fmt:
+	@cargo fmt
 
 
 .PHONY: clean
