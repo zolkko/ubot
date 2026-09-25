@@ -1,18 +1,21 @@
 struct VOut {
     @builtin(position) position: vec4f,
     @location(0) uv: vec2f,
+    @location(1) @interpolate(flat) value: f32,
 };
 
 struct GaugeUniforms {
-    value: f32,
-    aspect: f32,
+    values: vec2f, // x = left gauge, y = right gauge
+    aspect: f32,   // aspect of the whole surface (width / height)
     time: f32,
-    pad: f32,
 };
 
 @group(0) @binding(0) var<uniform> u: GaugeUniforms;
 
 const PI: f32 = 3.14159265358979;
+
+// Gauges are laid out left to right, each in an equal-width column
+const GAUGE_COUNT: u32 = 2u;
 
 // Metal's smoothstep(e0, e1, x) with e0 > e1 is technically undefined;
 // this helper gives the intended "falling edge" result explicitly.
@@ -21,25 +24,42 @@ fn falloff(outer: f32, inner: f32, x: f32) -> f32 {
     return 1.0 - smoothstep(inner, outer, x);
 }
 
-// Full-screen triangle, no vertex buffer needed
+// One quad (two triangles) per instance, no vertex buffer needed.
+// Draw with `draw(0..6, 0..GAUGE_COUNT)`.
 @vertex
-fn gauge_vertex(@builtin(vertex_index) vid: u32) -> VOut {
-    var positions = array<vec2f, 3>(
-        vec2f(-1.0, -1.0),
-        vec2f( 3.0, -1.0),
-        vec2f(-1.0,  3.0)
+fn gauge_vertex(
+    @builtin(vertex_index) vid: u32,
+    @builtin(instance_index) iid: u32,
+) -> VOut {
+    var corners = array<vec2f, 6>(
+        vec2f(0.0, 0.0),
+        vec2f(1.0, 0.0),
+        vec2f(0.0, 1.0),
+        vec2f(0.0, 1.0),
+        vec2f(1.0, 0.0),
+        vec2f(1.0, 1.0)
     );
+    let uv = corners[vid]; // 0..1 within this gauge's cell
+
+    // place the cell in its column: x in [-1 + iid * w, -1 + (iid + 1) * w]
+    let w = 2.0 / f32(GAUGE_COUNT);
+    let ndc = vec2f(-1.0 + (f32(iid) + uv.x) * w, uv.y * 2.0 - 1.0);
+
     var out: VOut;
-    out.position = vec4f(positions[vid], 0.0, 1.0);
-    out.uv = positions[vid] * 0.5 + 0.5; // 0..1
+    out.position = vec4f(ndc, 0.0, 1.0);
+    out.uv = uv;
+    out.value = u.values[iid];
     return out;
 }
 
 @fragment
 fn gauge_fragment(frag: VOut) -> @location(0) vec4f {
-    // center + aspect-correct
+    // center + aspect-correct within this gauge's cell
+    let cellAspect = u.aspect / f32(GAUGE_COUNT);
     var p = frag.uv * 2.0 - 1.0;
-    p.x *= u.aspect;
+    p.x *= cellAspect;
+    // fit the gauge to the shorter side, so it isn't clipped in narrow cells
+    p *= max(1.0, 1.0 / cellAspect);
 
     let r = length(p);
     let angle = atan2(p.y, p.x); // -pi..pi
@@ -62,7 +82,7 @@ fn gauge_fragment(frag: VOut) -> @location(0) vec4f {
     if (onArc && ringMask > 0.0) {
         let track = vec3f(0.25);
         let fillColor = mix(vec3f(0.1, 0.8, 0.3), vec3f(0.9, 0.2, 0.2), t);
-        let c = select(track, fillColor, t <= u.value);
+        let c = select(track, fillColor, t <= frag.value);
         color = mix(color, c, ringMask);
     }
 
@@ -79,7 +99,7 @@ fn gauge_fragment(frag: VOut) -> @location(0) vec4f {
     }
 
     // --- Needle ---
-    let needleAngle = startAngle + u.value * sweep;
+    let needleAngle = startAngle + frag.value * sweep;
     let needleDir = vec2f(cos(needleAngle), sin(needleAngle));
     let side = dot(p, vec2f(-needleDir.y, needleDir.x));
     let along = dot(p, needleDir);

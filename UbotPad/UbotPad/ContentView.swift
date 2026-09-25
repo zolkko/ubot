@@ -22,18 +22,19 @@ struct ContentView: View {
 
     var body: some View {
         ZStack {
+            InstrumentPanelView()
+                .padding()
+                .background(Color(.systemBackground))
+                .ignoresSafeArea()
+                .allowsHitTesting(false)
+
             VStack(spacing: 16) {
                 statusBar
                 distanceBar
-
-                HStack(spacing: 24) {
-                    SpeedometerView(speed: abs(mergedPacket.ly), label: "l.joystick.tilt.left")
-                    SpeedometerView(speed: abs(mergedPacket.ry), label: "r.joystick.tilt.right")
-                }
-                .padding(.horizontal)
+                Spacer()
             }
             .padding()
-            .background(Color(.systemBackground))
+            .background(Color.clear)
             .onChange(of: gameController.packet) { _, _ in
                 ble.send(mergedPacket)
             }

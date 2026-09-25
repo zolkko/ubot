@@ -29,8 +29,6 @@ final class TouchPadMTKView: MTKView {
     fileprivate var touchController: TCTouchController!
 
     private weak var manager: GameControllerManager?
-    
-    fileprivate var speedometer: SpeedometerWrapper?
 
     init?(renderer: Renderer, manager: GameControllerManager) {
         guard let metalDevice = MTLCreateSystemDefaultDevice() else {
@@ -59,13 +57,10 @@ final class TouchPadMTKView: MTKView {
         self.touchController = TouchPadMTKView.makeTouchController(for: self)
 
         manager.touchController = self.touchController
-        
-        self.speedometer = SpeedometerWrapper(view: self)
     }
     
     required init(coder: NSCoder) {
         super.init(coder: coder)
-        self.speedometer = SpeedometerWrapper(view: self)
     }
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -192,8 +187,6 @@ class Renderer: NSObject, MTKViewDelegate {
 //        encoder.endEncoding()
 //        commandBuffer.present(drawable)
 //        commandBuffer.commit()
-
-        (view as! TouchPadMTKView).speedometer?.draw(speed: 50)
     }
 }
 
