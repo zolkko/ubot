@@ -1,24 +1,49 @@
 import SwiftUI
+import TouchController
+import os
+
 
 struct ContentView: View {
-    @StateObject private var gameController = GameControllerManager()
-    @StateObject private var ble = BLEManager()
+    @State private var gameController: GameControllerManager
+    @State private var ble = BLEManager()
+
+    init() {
+        _gameController = State(wrappedValue: GameControllerManager())
+    }
+
+    private var mergedPacket: ControlPacket {
+        var packet = gameController.packet
+//        if gameController.controllerName == nil {
+//            packet.lx = touchController.state.lx
+//            packet.ly = touchController.state.ly
+//        }
+        return packet
+    }
 
     var body: some View {
-        VStack(spacing: 16) {
-            statusBar
-            distanceBar
+        ZStack {
+            InstrumentPanelView()
+                .padding()
+                .background(Color(.systemBackground))
+                .ignoresSafeArea()
+                .allowsHitTesting(false)
 
-            HStack(spacing: 24) {
-                SpeedometerView(speed: abs(gameController.packet.ly), label: "LEFT TRACK")
-                SpeedometerView(speed: abs(gameController.packet.ry), label: "RIGHT TRACK")
+            VStack(spacing: 16) {
+                statusBar
+                distanceBar
+                Spacer()
             }
-            .padding(.horizontal)
-        }
-        .padding()
-        .background(Color(.systemBackground))
-        .onChange(of: gameController.packet) { _, packet in
-            ble.send(packet)
+            .padding()
+            .background(Color.clear)
+            .onChange(of: gameController.packet) { _, _ in
+                ble.send(mergedPacket)
+            }
+
+            if (TCTouchController.isSupported) {
+                TouchPadView(manager: gameController)
+                    .ignoresSafeArea()
+                    .allowsHitTesting(true)
+            }
         }
     }
 
@@ -26,7 +51,7 @@ struct ContentView: View {
         HStack {
             Label(
                 gameController.controllerName ?? "No controller",
-                systemImage: gameController.controllerName == nil ? "gamecontroller.slash" : "gamecontroller.fill"
+                systemImage: gameController.controllerName == nil ? "minus.square" : "gamecontroller.fill"
             )
             .foregroundStyle(gameController.controllerName == nil ? .secondary : .primary)
 
