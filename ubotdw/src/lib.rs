@@ -131,7 +131,7 @@ impl<'a> Speedometer<'a> {
                 width: 1,
                 height: 1,
                 present_mode: best_present_mode,
-                alpha_mode: wgpu::CompositeAlphaMode::Opaque,
+                alpha_mode: wgpu::CompositeAlphaMode::Inherit,
                 view_formats: vec![],
                 desired_maximum_frame_latency: 2,
             },
